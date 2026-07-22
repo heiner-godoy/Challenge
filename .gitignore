@@ -1,0 +1,22 @@
+# Secrets
+back-end/.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+back-end/.venv/
+
+# Node / front-end
+front-end/dist/
+front-end/node_modules/
+front-end/.angular/
+
+# Build / cache
+**/.cache/
+**/.angular/
+
+# IDEs
+.vscode/
+*.swp
