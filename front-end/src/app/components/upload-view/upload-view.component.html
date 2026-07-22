@@ -1,0 +1,44 @@
+<section class="upload">
+  <header class="upload__header">
+    <h2>📤 Subir nuevos documentos</h2>
+    <p>Arrastra archivos aquí o haz clic para seleccionar</p>
+  </header>
+
+  <label
+    class="dropzone"
+    [class.dropzone--active]="isDragging()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    <input type="file" multiple class="visually-hidden" (change)="onFilePicked($event)" />
+    <span class="dropzone__icon" aria-hidden="true">⬆️</span>
+    <p class="dropzone__text">Arrastra archivos aquí o haz clic para seleccionar</p>
+    <p class="dropzone__formats">Formatos soportados: PDF, Word, Excel, PowerPoint, Markdown, CSV, JSON, HTML</p>
+  </label>
+
+  <ul class="doc-list">
+    <li class="doc-row" *ngFor="let doc of docs()">
+      <span class="doc-row__name">📄 {{ doc.name }}</span>
+      <span class="doc-row__area">{{ doc.area }}</span>
+      <span
+        class="doc-row__status"
+        [class.doc-row__status--ready]="doc.status === 'listo'"
+        [class.doc-row__status--processing]="doc.status === 'procesando'"
+        [class.doc-row__status--error]="doc.status === 'error'"
+      >
+        <ng-container [ngSwitch]="doc.status">
+          <span *ngSwitchCase="'listo'">✓ Listo</span>
+          <span *ngSwitchCase="'procesando'">⏳ Procesando</span>
+          <span *ngSwitchCase="'error'">⚠️ Error</span>
+        </ng-container>
+      </span>
+    </li>
+  </ul>
+
+  <button type="button" class="upload__process-btn" (click)="processAll()">
+    🚀 Procesar e indexar documentos
+  </button>
+
+  <p class="upload__note">ℹ️ Los documentos se procesarán y estarán disponibles en unos minutos.</p>
+</section>

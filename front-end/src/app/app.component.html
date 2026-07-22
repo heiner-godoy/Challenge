@@ -1,0 +1,32 @@
+<div class="shell">
+  <header class="topbar-mobile">
+    <div class="topbar-mobile__brand">
+      <span aria-hidden="true">🤖</span> Nexus
+    </div>
+    <button
+      type="button"
+      class="topbar-mobile__toggle"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-controls="sidebar-panel"
+      aria-label="Abrir menú"
+    >
+      ≡
+    </button>
+  </header>
+
+  <aside id="sidebar-panel" class="shell__sidebar" [class.shell__sidebar--open]="mobileMenuOpen()">
+    <nexus-sidebar (navigate)="closeMenu()"></nexus-sidebar>
+  </aside>
+
+  <div
+    class="shell__scrim"
+    *ngIf="mobileMenuOpen()"
+    (click)="closeMenu()"
+    aria-hidden="true"
+  ></div>
+
+  <main class="shell__main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

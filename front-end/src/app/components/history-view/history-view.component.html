@@ -1,0 +1,33 @@
+<section class="history">
+  <h2>📜 Historial de conversaciones</h2>
+
+  <ng-container *ngIf="history().length; else empty">
+    <div class="group" *ngIf="today().length">
+      <p class="group__label">Hoy</p>
+      <ul>
+        <li *ngFor="let c of today()">
+          <span>💬 {{ c.title }}</span>
+          <span class="group__time">{{ c.time }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="group" *ngIf="yesterday().length">
+      <p class="group__label">Ayer</p>
+      <ul>
+        <li *ngFor="let c of yesterday()">
+          <span>💬 {{ c.title }}</span>
+          <span class="group__time">{{ c.time }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <button type="button" class="clear-btn" (click)="clear()">🗑️ Limpiar historial</button>
+  </ng-container>
+
+  <ng-template #empty>
+    <p class="empty">🔍 Aún no tienes conversaciones. Empieza preguntándole algo a Nexus.</p>
+  </ng-template>
+
+  <p class="note">ℹ️ El historial se guarda localmente en tu navegador.</p>
+</section>

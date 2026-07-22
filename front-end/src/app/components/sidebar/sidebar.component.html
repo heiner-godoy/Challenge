@@ -1,0 +1,55 @@
+<div class="sidebar" role="navigation" aria-label="Navegación principal de Nexus">
+  <div class="brand">
+    <span class="brand__avatar" aria-hidden="true">🤖</span>
+    <div>
+      <h1 class="brand__name">Nexus</h1>
+      <p class="brand__tag">AI Agent</p>
+    </div>
+  </div>
+
+  <nav class="areas" aria-label="Filtra por área">
+    <p class="section-label">📁 Áreas</p>
+    <ul>
+      <li *ngFor="let area of areas">
+        <button
+          type="button"
+          class="area-btn"
+          [class.area-btn--active]="selectedArea() === area.id"
+          [attr.aria-pressed]="selectedArea() === area.id"
+          (click)="selectArea(area.id)"
+        >
+          <span class="area-btn__icon" aria-hidden="true">{{ area.icon }}</span>
+          <span>{{ area.label }}</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="divider" role="presentation"></div>
+
+  <div class="stats" aria-label="Estadísticas de la base de conocimiento">
+    <p class="section-label">📊 Estadísticas</p>
+    <p class="stats__row">📚 {{ documentCount() }} documentos indexados</p>
+    <p class="stats__row">🕐 Actualizado: {{ lastUpdatedLabel() }}</p>
+    <p class="stats__row">💬 {{ queriesToday() }} consultas hoy</p>
+  </div>
+
+  <div class="footer">
+    <a routerLink="/historial" routerLinkActive="footer-link--active" class="footer-link">
+      <span aria-hidden="true">📜</span> Historial
+    </a>
+    <a routerLink="/documentos" routerLinkActive="footer-link--active" class="footer-link">
+      <span aria-hidden="true">📤</span> Documentos
+    </a>
+    <button type="button" class="footer-link" (click)="theme.toggle()" [attr.aria-pressed]="theme.isDark()">
+      <span aria-hidden="true">{{ theme.isDark() ? '☀️' : '🌙' }}</span>
+      Modo {{ theme.isDark() ? 'claro' : 'oscuro' }}
+    </button>
+    <button type="button" class="footer-link footer-link--muted">
+      <span aria-hidden="true">❓</span> Centro de ayuda
+    </button>
+    <button type="button" class="footer-link footer-link--muted">
+      <span aria-hidden="true">🚪</span> Cerrar sesión
+    </button>
+  </div>
+</div>

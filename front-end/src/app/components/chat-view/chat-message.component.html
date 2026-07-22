@@ -1,0 +1,62 @@
+<div class="row" [class.row--user]="message.role === 'user'">
+  <div class="avatar" *ngIf="message.role === 'agent'" aria-hidden="true">🤖</div>
+
+  <div class="bubble" [class.bubble--user]="message.role === 'user'">
+    <ng-container *ngIf="message.role === 'agent'; else userText">
+      <p class="bubble__lead">💡 {{ message.text }}</p>
+
+      <ul class="bubble__bullets" *ngIf="message.bulletPoints?.length">
+        <li *ngFor="let point of message.bulletPoints">{{ point }}</li>
+      </ul>
+
+      <div class="bubble__sources" *ngIf="message.sources?.length">
+        <p class="bubble__sources-title">📚 Fuentes:</p>
+        <p class="bubble__source" *ngFor="let s of message.sources">
+          • {{ s.fileName }} ({{ s.matchPercent }}% match)
+        </p>
+      </div>
+
+      <div class="bubble__meta">
+        <span *ngIf="message.responseTimeSeconds as t">⏱️ Tiempo de respuesta: {{ t }}s</span>
+        <time [attr.datetime]="message.timestamp.toISOString()">{{ timeLabel(message.timestamp) }}</time>
+      </div>
+
+      <div class="feedback" role="group" aria-label="Este mensaje fue útil">
+        <button
+          type="button"
+          class="feedback__btn"
+          [class.feedback__btn--active]="message.feedback === 'up'"
+          [attr.aria-pressed]="message.feedback === 'up'"
+          (click)="onFeedback('up')"
+        >
+          👍
+        </button>
+        <button
+          type="button"
+          class="feedback__btn"
+          [class.feedback__btn--active]="message.feedback === 'down'"
+          [attr.aria-pressed]="message.feedback === 'down'"
+          (click)="onFeedback('down')"
+        >
+          👎
+        </button>
+        <span class="feedback__ack" *ngIf="message.feedback === 'up'">¡Gracias! Tu feedback me ayuda a mejorar.</span>
+      </div>
+
+      <div class="feedback-form" *ngIf="showReasons">
+        <p>¿Qué salió mal?</p>
+        <div class="feedback-form__chips">
+          <button type="button" class="chip" *ngFor="let reason of downReasons">{{ reason }}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #userText>
+      <p>{{ message.text }}</p>
+      <div class="bubble__meta bubble__meta--user">
+        <time [attr.datetime]="message.timestamp.toISOString()">{{ timeLabel(message.timestamp) }}</time>
+        <span aria-hidden="true">✓✓</span>
+      </div>
+    </ng-template>
+  </div>
+</div>

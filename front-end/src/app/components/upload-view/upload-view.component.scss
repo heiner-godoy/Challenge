@@ -1,0 +1,89 @@
+.upload {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.upload__header {
+  margin-bottom: 20px;
+
+  h2 { font-size: 20px; margin-bottom: 4px; }
+  p { color: var(--text-secondary); font-size: 14px; }
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 40px 20px;
+  cursor: pointer;
+  background: var(--bg-bubble-agent);
+  transition: border-color 150ms ease, background-color 150ms ease;
+
+  &--active {
+    border-color: var(--color-accent);
+    background: var(--hover-sidebar-item);
+  }
+
+  &__icon { font-size: 28px; }
+  &__text { font-weight: 500; }
+  &__formats { font-size: 12.5px; color: var(--text-secondary); }
+}
+
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-bubble-agent);
+  font-size: 13.5px;
+
+  & + & { border-top: 1px solid var(--border-subtle); }
+
+  &__name { flex: 1; }
+  &__area { color: var(--text-secondary); font-size: 12.5px; }
+
+  &__status {
+    font-weight: 600;
+    font-size: 12.5px;
+    white-space: nowrap;
+
+    &--ready { color: var(--success); }
+    &--processing { color: var(--warning); }
+    &--error { color: var(--danger); }
+  }
+}
+
+.upload__process-btn {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--color-secondary);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14.5px;
+
+  &:hover { background: var(--color-primary); }
+}
+
+.upload__note {
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
