@@ -3,8 +3,6 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 ![Cohere](https://img.shields.io/badge/Cohere-39594C?style=for-the-badge&logo=cohere&logoColor=white)
 ![Groq](https://img.shields.io/badge/Groq-F54E00?style=for-the-badge&logo=groq&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-121011?style=for-the-badge&logo=langchain&logoColor=white)
-![Tavily](https://img.shields.io/badge/Tavily_Search-008080?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue.style=for-the-badge)
 
@@ -33,7 +31,6 @@ El **Agente Corporativo de IA** resuelve el problema común en las organizacione
 Mediante una arquitectura **RAG (Retrieval-Augmented Generation)** avanzada asistida por **Cohere Embeddings Multilingües** y **Groq Llama 3.3 70B**, el agente no solo responde dudas de colaboradores de forma precisa y concisa, sino que **garantiza la gobernanza de datos**:
 - **Cita las fuentes oficiales exactas** indicando el archivo original, la ubicación interna (Página, Diapositiva, Hoja/Fila) y la fecha de actualización.
 - **Asigna Ownership (Responsables de Área)** para que el colaborador sepa a quién contactar si requiere profundizar una solicitud.
-- **Integra Búsqueda Web (Tavily + LangChain)** como respaldo inteligente para consultas externas.
 
 ---
 
@@ -59,7 +56,6 @@ flowchart TD
             COHERE[Cohere Embeddings embed-multilingual-v3.0]
             COSINE[Búsqueda Semántica Vectorial]
             GROQ[Groq Inferencia Llama 3.3 70B]
-            TAVILY[Tavily Search Engine + LangChain]
         end
     end
 
@@ -78,8 +74,7 @@ flowchart TD
     API -->|2. Embedding Consulta| COHERE
     COHERE -->|3. Similitud Coseno| COSINE
     COSINE -->|4. Fragmentos + Metadatos| GROQ
-    API -.->|5. Búsqueda Externa Fallback| TAVILY
-    GROQ -->|6. Respuesta Fundamentada + Citas| UI
+    GROQ -->|5. Respuesta Fundamentada + Citas| UI
 ```
 
 ---
@@ -108,9 +103,6 @@ flowchart TD
 5. **Inferencia Ultra-Rápida y Confiable (Groq LLM)**:
    - Generación de respuestas concisas y amables utilizando `llama-3.3-70b-versatile` servido por la infraestructura LPU de Groq.
    - Principio "Garbage in, garbage out": Si la información no está en las fuentes oficiales, aconseja contactar al responsable del área.
-
-6. **Integración de Agente Web (Tavily + LangChain)**:
-   - Conexión nativa con Tavily Search para resolver dudas externas de actualidad cuando se requiera.
 
 ---
 
@@ -145,10 +137,9 @@ El procesamiento transforma documentos brutos en vectores limpios con metadatos:
 
 - **Lenguaje**: Python 3.10+
 - **Framework Web Backend**: FastAPI + Uvicorn
-- **Framework de IA & Agentes**: LangChain, LangChain-Community, LangChain-Tavily
+- **Framework de IA & Agentes**: Cohere y Groq
 - **Embeddings & RAG**: Cohere API (`embed-multilingual-v3.0`)
 - **LLM Inferencia**: Groq API (`llama-3.3-70b-versatile`)
-- **Búsqueda Web**: Tavily Search API
 - **Procesamiento Documental**: PyPDF, python-docx, python-pptx, openpyxl, pandas, BeautifulSoup4, pytesseract
 
 ---
@@ -158,7 +149,7 @@ El procesamiento transforma documentos brutos en vectores limpios con metadatos:
 ### Requisitos Previos
 - Python 3.10 o superior
 - Git
-- Claves de API activas (Cohere, Groq y opcionalmente Tavily)
+- Claves de API activas (Cohere y Groq)
 
 ### 1. Clonar el Repositorio
 ```bash
@@ -182,7 +173,6 @@ HOST=0.0.0.0
 
 COHERE_API_KEY=tu_cohere_api_key_aqui
 GROQ_API_KEY=tu_groq_api_key_aqui
-TAVILY_API_KEY=tu_tavily_api_key_aqui
 
 COHERE_EMBEDDING_MODEL=embed-multilingual-v3.0
 GROQ_MODEL=llama-3.3-70b-versatile
@@ -213,7 +203,6 @@ Devuelve el estado operativo del backend, cantidad de fragmentos indexados y cat
     "Finanzas y Presupuestos",
     "Tecnología y Ciberseguridad"
   ],
-  "tavily_search_available": true
 }
 ```
 
@@ -272,7 +261,7 @@ Challenge/
 │   │       ├── document_loader.py     # Extracción, Limpieza, Chunking y Metadatos
 │   │       ├── cohere_rag.py          # Búsqueda Semántica Vectorial con Cohere Embeddings
 │   │       ├── groq_service.py        # Inferencia LLM con Groq Llama 3.3 70B
-│   │       └── tavily_service.py      # Búsqueda Web con Tavily y LangChain
+│   │       └── (servicios internos enfocados en RAG con Cohere y Groq)
 │   └── data/                          # Repositorio Documental Organizado por Áreas
 │       ├── rh/                        # Documentos de Recursos Humanos
 │       ├── financiero/                # Documentos de Finanzas

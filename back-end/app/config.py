@@ -5,7 +5,7 @@ from pydantic import AliasChoices, Field
 class Settings(BaseSettings):
     """
     =============================================================================
-    CONFIGURACIÓN GLOBAL DE LA APLICACIÓN (FastAPI, LangChain, Cohere, Groq & Tavily)
+    CONFIGURACIÓN GLOBAL DE LA APLICACIÓN (FastAPI, Cohere y Groq)
     =============================================================================
     Gestiona centralizadamente las credenciales y variables de entorno definidas
     en el archivo .env utilizando Pydantic BaseSettings.
@@ -42,14 +42,6 @@ class Settings(BaseSettings):
         description="Clave de API para la inferencia de lenguaje natural con Groq"
     )
     
-    # API Key para Tavily Search (Búsqueda Web en tiempo real con LangChain)
-    # Soporta alias alternativos para evitar fallos si se escribe TAVILI_API_KEY o TAVILY_API_KEY
-    TAVILY_API_KEY: str = Field(
-        default="",
-        validation_alias=AliasChoices("TAVILY_API_KEY", "TAVILI_API_KEY"),
-        description="Clave de API para búsquedas en la web usando Tavily y LangChain"
-    )
-
     # ---------------------------------------------------------------------------
     # BLOQUE 3: MODELOS Y RUTAS DE ALMACENAMIENTO
     # ---------------------------------------------------------------------------

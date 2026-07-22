@@ -4,9 +4,7 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Cohere](https://img.shields.io/badge/Cohere-39594C?style=for-the-badge&logo=cohere&logoColor=white)
 ![Groq](https://img.shields.io/badge/Groq-F54E00?style=for-the-badge&logo=groq&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-121011?style=for-the-badge&logo=langchain&logoColor=white)
-
-Backend desarrollado en **FastAPI** para el servidor del **Agente Corporativo de Inteligencia Artificial**. Integra un motor de ingesta y extracción multi-formato, búsqueda semántica vectorial basada en **Cohere Embeddings**, inferencia de respuestas con **Groq (Llama 3.3 70B)** y capacidades de búsqueda web mediante **Tavily + LangChain**.
+Backend desarrollado en **FastAPI** para el servidor del **Agente Corporativo de Inteligencia Artificial**. Integra un motor de ingesta y extracción multi-formato, búsqueda semántica vectorial basada en **Cohere Embeddings** y inferencia de respuestas con **Groq (Llama 3.3 70B)**.
 
 ---
 
@@ -39,7 +37,7 @@ back-end/
         ├── document_loader.py # Extracción por formato, Limpieza, Chunking y Metadatos
         ├── cohere_rag.py      # Motor Vectorial y Búsqueda Semántica Coseno
         ├── groq_service.py    # Servicio de Sintetización LLM con Gobernanza
-        └── tavily_service.py  # Integración de Búsqueda Web con Tavily y LangChain
+        └── (sin servicios de búsqueda web externa)
 ```
 
 ---
@@ -80,9 +78,6 @@ Gestiona el almacenamiento vectorial en memoria y utiliza el modelo `embed-multi
 ### 3. `GroqService` ([`app/services/groq_service.py`](file:///home/heiner/repositorios-git/Challenge/back-end/app/services/groq_service.py))
 Encargado de la inferencia de lenguaje natural utilizando el modelo `llama-3.3-70b-versatile` en Groq. Garantiza el cumplimiento de las normas de gobernanza corporativa citando fuentes y responsables.
 
-### 4. `TavilyService` ([`app/services/tavily_service.py`](file:///home/heiner/repositorios-git/Challenge/back-end/app/services/tavily_service.py))
-Encapsula la herramienta `TavilySearch` integrada con **LangChain** para realizar consultas en tiempo real a la web.
-
 ---
 
 ## 📦 Instalación y Configuración
@@ -106,7 +101,6 @@ HOST=0.0.0.0
 
 COHERE_API_KEY="tu_cohere_api_key"
 GROQ_API_KEY="tu_groq_api_key"
-TAVILY_API_KEY="tu_tavily_api_key"
 
 COHERE_EMBEDDING_MODEL=embed-multilingual-v3.0
 GROQ_MODEL=llama-3.3-70b-versatile
@@ -130,8 +124,7 @@ Verifica la salud del servidor backend.
 {
   "status": "healthy",
   "documents_indexed": 42,
-  "categories_available": ["Recursos Humanos", "Finanzas y Presupuestos"],
-  "tavily_search_available": true
+  "categories_available": ["Recursos Humanos", "Finanzas y Presupuestos"]
 }
 ```
 

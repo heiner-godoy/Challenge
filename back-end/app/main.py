@@ -6,7 +6,6 @@ Configura las rutas API, los middlewares de CORS, los eventos de inicio
 y coordina los servicios principales:
 1. CohereRAGService: Búsqueda Semántica Vectorial con Embeddings de Cohere
 2. GroqService: Inferencia de Lenguaje Natural con Groq Llama 3.3 70B
-3. TavilyService: Búsqueda Web en Tiempo Real integrada con LangChain
 """
 
 import os
@@ -20,7 +19,6 @@ from app.schemas.chat import ChatRequest, ChatResponse, DocumentSource, IngestRe
 # Importaciones de los servicios del backend
 from app.services.cohere_rag import CohereRAGService
 from app.services.groq_service import GroqService
-from app.services.tavily_service import TavilyService
 
 # ---------------------------------------------------------------------------
 # BLOQUE 1: INICIALIZACIÓN DE LA APLICACIÓN FASTAPI Y MIDDLEWARES
@@ -32,8 +30,7 @@ app = FastAPI(
         "Backend en FastAPI para el Agente Corporativo de IA. "
         "Soporta Gobernanza de Datos por Categorías y Responsables (Etapa 1), "
         "Extracción Multi-formato Limpia y Chunking Estructurado (Etapa 2), "
-        "Búsqueda Semántica Vectorial con Cohere, Inferencia Ultra-Rápida con Groq "
-        "y Búsqueda Web con Tavily + LangChain."
+        "Búsqueda Semántica Vectorial con Cohere y Inferencia Ultra-Rápida con Groq."
     )
 )
 
@@ -51,7 +48,6 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 rag_service = CohereRAGService()     # Servicio RAG Vectorial con Cohere Embeddings
 groq_service = GroqService()         # Servicio LLM Inferencia con Groq
-tavily_service = TavilyService()     # Servicio Búsqueda Web con Tavily + LangChain
 
 # ---------------------------------------------------------------------------
 # BLOQUE 3: EVENTO DE CICLO DE VIDA (STARTUP EVENT)
@@ -70,7 +66,6 @@ async def startup_event():
     docs_proc, chunks_proc, categories = rag_service.ingest_directory(data_dir)
     print(f"✅ Ingesta inicial completada: {docs_proc} documentos, {chunks_proc} fragmentos indexados.")
     print(f"🏷️ Categorías/Áreas detectadas: {categories}")
-    print(f"🌐 Estado de Tavily Search (LangChain): {'Activo ✅' if tavily_service.is_available() else 'Pendiente API Key ⚠️'}")
     print("=================================================================")
 
 # ---------------------------------------------------------------------------
@@ -90,12 +85,11 @@ def read_root():
 @app.get("/health", summary="Verificación de estado del servidor")
 @app.get("/api/health", summary="Verificación de estado del servidor (API v1)")
 def health_check():
-    """Retorna estadísticas operativas del sistema: documentos vectorizados, áreas disponibles y estado de Tavily."""
+    """Retorna estadísticas operativas del sistema: documentos vectorizados y áreas disponibles."""
     return {
         "status": "healthy",
         "documents_indexed": len(rag_service.chunks),
-        "categories_available": list(rag_service.categories),
-        "tavily_search_available": tavily_service.is_available()
+        "categories_available": list(rag_service.categories)
     }
 
 # ---------------------------------------------------------------------------
