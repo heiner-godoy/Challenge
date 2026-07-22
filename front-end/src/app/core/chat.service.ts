@@ -1,5 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Area, AgentStatus, ChatMessage, ConversationSummary, SourceRef } from '../models/models';
+
+const API_CHAT = '/api/chat';
 
 export const AREAS: Area[] = [
   { id: 'legal', label: 'Legal', icon: '⚖️' },
@@ -17,6 +20,7 @@ export const AREAS: Area[] = [
 
 export const QUICK_SUGGESTIONS: string[] = [
   '¿Cómo rastreo mi pedido?',
+  'Restaurar pedido',
   'Política de privacidad',
   'Días de vacaciones disponibles',
   'Contacto de soporte IT',
@@ -89,6 +93,16 @@ const MOCK_ANSWERS: Record<string, MockAnswer> = {
     ],
     sources: [{ fileName: 'directorio_ti.xlsx', matchPercent: 84 }],
   },
+  restaurar: {
+    text: 'Si necesitas restaurar un pedido (por ejemplo, reactivar uno cancelado):',
+    bulletPoints: [
+      'Verifica el estado en "Mis pedidos"; si el pedido aparece como "Cancelado", consulta la causa.',
+      'Contacta a Logística indicando el número de pedido y la razón para restaurarlo.',
+      'Si se requiere autorización, tu líder o Finanzas pueden aprobar la reactivación.',
+      'Si hubo un error de pago, verifica con el área financiera antes de solicitar la restauración.',
+    ],
+    sources: [{ fileName: 'procedimientos_logistica.pdf', matchPercent: 86 }],
+  },
 };
 
 @Injectable({ providedIn: 'root' })
@@ -100,6 +114,8 @@ export class ChatService {
   readonly lastUpdatedLabel = signal('hace 2 horas');
   readonly history = signal<ConversationSummary[]>(MOCK_HISTORY);
   readonly selectedArea = signal<string | null>(null);
+
+  constructor(private readonly http: HttpClient) {}
 
   sendMessage(text: string): void {
     const trimmed = text.trim();
@@ -115,23 +131,56 @@ export class ChatService {
     this.messages.update((list) => [...list, userMessage]);
     this.status.set('searching');
 
-    const delay = 900 + Math.random() * 700;
-    window.setTimeout(() => {
-      const answer = this.resolveAnswer(trimmed);
-      const agentMessage: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'agent',
-        text: answer.text,
-        bulletPoints: answer.bulletPoints,
-        sources: answer.sources,
-        responseTimeSeconds: Number((delay / 1000).toFixed(1)),
-        timestamp: new Date(),
-        feedback: null,
-      };
-      this.messages.update((list) => [...list, agentMessage]);
-      this.status.set('idle');
-      this.queriesToday.update((n) => n + 1);
-    }, delay);
+    const requestStart = performance.now();
+    const requestBody = {
+      message: trimmed,
+      category: this.selectedArea() ?? undefined,
+      history: this.messages().map((message) => ({
+        role: message.role === 'user' ? 'user' : 'assistant',
+        content: message.text,
+      })),
+    };
+
+    this.http.post<{ answer: string; sources?: Array<{ filename: string; score: number }> }>(API_CHAT, requestBody).subscribe({
+      next: (response) => {
+        const responseTimeSeconds = Number(((performance.now() - requestStart) / 1000).toFixed(1));
+        const sources = response.sources?.map((source) => ({
+          fileName: source.filename,
+          matchPercent: Math.round((source.score ?? 0) * 100),
+        })) ?? [];
+
+        const agentMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'agent',
+          text: response.answer,
+          bulletPoints: [],
+          sources,
+          responseTimeSeconds,
+          timestamp: new Date(),
+          feedback: null,
+        };
+        this.messages.update((list) => [...list, agentMessage]);
+        this.status.set('idle');
+        this.queriesToday.update((n) => n + 1);
+      },
+      error: () => {
+        const responseTimeSeconds = Number(((performance.now() - requestStart) / 1000).toFixed(1));
+        const answer = this.resolveAnswer(trimmed);
+        const agentMessage: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'agent',
+          text: answer.text,
+          bulletPoints: answer.bulletPoints,
+          sources: answer.sources,
+          responseTimeSeconds,
+          timestamp: new Date(),
+          feedback: null,
+        };
+        this.messages.update((list) => [...list, agentMessage]);
+        this.status.set('idle');
+        this.queriesToday.update((n) => n + 1);
+      },
+    });
   }
 
   setFeedback(messageId: string, value: 'up' | 'down'): void {
@@ -149,6 +198,8 @@ export class ChatService {
     if (q.includes('reembolso') || q.includes('devol')) return MOCK_ANSWERS['reembolso'];
     if (q.includes('rastre') || q.includes('pedido') || q.includes('envío') || q.includes('envio'))
       return MOCK_ANSWERS['pedido'];
+    if (q.includes('restaur') || q.includes('reactiv') || q.includes('re-activar'))
+      return MOCK_ANSWERS['restaurar'];
     if (q.includes('privacidad') || q.includes('datos personales')) return MOCK_ANSWERS['privacidad'];
     if (q.includes('vacacion')) return MOCK_ANSWERS['vacaciones'];
     if (q.includes('soporte') || q.includes(' ti') || q.includes('it ')) return MOCK_ANSWERS['soporte'];

@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { ChatService, QUICK_SUGGESTIONS } from '../../core/chat.service';
 import { ChatMessageComponent } from './chat-message.component';
 
@@ -16,7 +17,7 @@ const MAX_CHARS = 800;
 @Component({
   selector: 'nexus-chat-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatMessageComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ChatMessageComponent],
   templateUrl: './chat-view.component.html',
   styleUrl: './chat-view.component.scss',
 })

@@ -16,15 +16,17 @@ export class SidebarComponent {
   readonly theme = inject(ThemeService);
 
   @Output() navigate = new EventEmitter<void>();
+  @Output() closeSidebar = new EventEmitter<void>();
 
   readonly areas = AREAS;
-  readonly documentCount = this.chat.documentCount;
-  readonly lastUpdatedLabel = this.chat.lastUpdatedLabel;
-  readonly queriesToday = this.chat.queriesToday;
   readonly selectedArea = this.chat.selectedArea;
 
   selectArea(id: string): void {
     this.selectedArea.set(this.selectedArea() === id ? null : id);
     this.navigate.emit();
+  }
+
+  hideSidebar(): void {
+    this.closeSidebar.emit();
   }
 }

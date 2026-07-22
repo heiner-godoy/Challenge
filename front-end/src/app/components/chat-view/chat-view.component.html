@@ -1,8 +1,14 @@
 <section class="chat">
   <header class="chat-header">
     <div>
-      <h2 class="chat-header__title">Nexus <span class="status-dot" aria-hidden="true">🟢</span> <span class="status-text">En línea</span></h2>
-      <p class="chat-header__subtitle">Escribe tu pregunta sobre cualquier área de la empresa</p>
+      <h2 class="chat-header__title">Nexus <span class="status-dot" aria-hidden="true">●</span></h2>
+    </div>
+    <div class="microcopies">
+      <div class="microcopies__row">
+        <button type="button" class="microcopy" *ngFor="let s of suggestions" (click)="useSuggestion(s)">
+          {{ s }}
+        </button>
+      </div>
     </div>
   </header>
 
@@ -30,15 +36,11 @@
 
     <ng-template #conversation>
       <div class="messages" role="log" aria-live="polite">
-        <nexus-chat-message
-          *ngFor="let m of messages()"
-          [message]="m"
-          (feedback)="onFeedback(m.id, $event)"
-        ></nexus-chat-message>
+        <nexus-chat-message *ngFor="let m of messages()" [message]="m"></nexus-chat-message>
 
         <div class="typing" *ngIf="status() === 'searching'">
           <span class="typing__spinner" aria-hidden="true"></span>
-          🔍 Nexus está buscando en {{ documentCount() }} documentos...
+          Buscando respuestas...
         </div>
 
         <div #scrollAnchor></div>
@@ -48,19 +50,16 @@
 
   <div class="composer">
     <div class="composer__input-row">
-      <button type="button" class="icon-btn" title="Adjuntar documento" aria-label="Adjuntar documento">📎</button>
-
-      <label class="visually-hidden" for="chat-input">¿En qué puedo ayudarte hoy?</label>
+      <a routerLink="/documentos" class="icon-btn" title="Adjuntar documento" aria-label="Adjuntar documento">📎</a>
+      <label class="visually-hidden" for="chat-input">Escribe tu pregunta</label>
       <textarea
         id="chat-input"
         rows="1"
         [(ngModel)]="draft"
         [maxlength]="maxChars"
-        placeholder="¿En qué puedo ayudarte hoy?"
+        placeholder="Escribe tu pregunta"
         (keydown.enter)="$event.preventDefault(); send()"
       ></textarea>
-
-      <button type="button" class="icon-btn" title="Hablar" aria-label="Hablar por voz">🎤</button>
 
       <button
         type="button"
@@ -74,22 +73,8 @@
         <ng-template #spinner><span class="spinner" aria-hidden="true"></span></ng-template>
       </button>
     </div>
-    <p class="composer__counter" *ngIf="draft.length > maxChars * 0.8">
+    <p class="composer__counter" *ngIf="draft.length > maxChars * 0.9">
       {{ draft.length }} / {{ maxChars }}
     </p>
-
-    <div class="suggestions" aria-label="Preguntas frecuentes">
-      <p class="suggestions__label">💬 Sugerencias rápidas:</p>
-      <div class="suggestions__row">
-        <button
-          type="button"
-          class="suggestion-chip"
-          *ngFor="let s of suggestions"
-          (click)="useSuggestion(s)"
-        >
-          {{ s }}
-        </button>
-      </div>
-    </div>
   </div>
 </section>

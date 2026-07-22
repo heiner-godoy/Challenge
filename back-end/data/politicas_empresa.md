@@ -1,14 +1,22 @@
 # Políticas Internas de la Empresa - Alura Tech 2026
 
+Resumen rápido:
+- Jornada estándar: 40 horas semanales.
+- Modalidad híbrida con 2 días remotos por semana (coordinar con tu líder).
+
 ## 1. Horario de Trabajo y Modalidad Híbrida
-- La jornada laboral estándar es de 40 horas semanales, de lunes a viernes de 8:00 AM a 5:00 PM.
-- Todos los colaboradores tienen derecho a 2 días de trabajo remoto (Home Office) por semana (martes y jueves), previa coordinación con su líder directo.
-- Las horas extras deben ser aprobadas previamente por el Gerente de Área.
+- Jornada: 40 horas semanales, lunes a viernes, 08:00–17:00.
+- Modalidad híbrida: hasta 2 días de trabajo remoto por semana (p. ej. martes y jueves), previo acuerdo con tu líder.
+- Horas extras: requieren aprobación previa del Gerente de Área.
 
 ## 2. Solicitud de Vacaciones
-- Los colaboradores tienen derecho a 15 días hábiles de vacaciones pagadas tras cumplir un año continuo en la compañía.
-- La solicitud debe ingresarse en el portal de RRHH con al menos 15 días de anticipación.
+- Derecho: 15 días hábiles de vacaciones pagadas después de un año continuo en la compañía.
+- Cómo solicitar: ingresa la petición en el portal de RRHH con al menos 15 días de antelación.
 
 ## 3. Código de Conducta e Inclusión
-- Alura Tech promueve un ambiente libre de acoso y discriminación por género, raza, orientación sexual o religión.
-- Es obligatorio realizar la capacitación anual de Ciberseguridad y Protección de Datos Personales (GDPR / LPD).
+- Alura Tech mantiene cero tolerancia frente al acoso y la discriminación.
+- Formación: la capacitación anual en Ciberseguridad y Protección de Datos (GDPR/LPD) es obligatoria.
+
+Contacto útil:
+- RRHH: rh@aluratech.com
+- Seguridad IT: it@aluratech.com

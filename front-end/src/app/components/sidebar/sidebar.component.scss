@@ -37,6 +37,23 @@
   }
 }
 
+.sidebar-close-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: linear-gradient(90deg, rgba(100,120,255,0.08), rgba(255,80,180,0.04));
+  color: var(--text-primary);
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.sidebar-close-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(72,60,255,0.08); }
+
 .section-label {
   font-size: 12px;
   font-weight: 600;

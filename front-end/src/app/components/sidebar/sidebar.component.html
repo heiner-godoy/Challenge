@@ -7,6 +7,10 @@
     </div>
   </div>
 
+  <button type="button" class="sidebar-close-btn" (click)="hideSidebar()">
+    <span aria-hidden="true">⬅️</span> Ocultar bandeja
+  </button>
+
   <nav class="areas" aria-label="Filtra por área">
     <p class="section-label">📁 Áreas</p>
     <ul>
@@ -26,14 +30,6 @@
   </nav>
 
   <div class="divider" role="presentation"></div>
-
-  <div class="stats" aria-label="Estadísticas de la base de conocimiento">
-    <p class="section-label">📊 Estadísticas</p>
-    <p class="stats__row">📚 {{ documentCount() }} documentos indexados</p>
-    <p class="stats__row">🕐 Actualizado: {{ lastUpdatedLabel() }}</p>
-    <p class="stats__row">💬 {{ queriesToday() }} consultas hoy</p>
-  </div>
-
   <div class="footer">
     <a routerLink="/historial" routerLinkActive="footer-link--active" class="footer-link">
       <span aria-hidden="true">📜</span> Historial
@@ -47,9 +43,6 @@
     </button>
     <button type="button" class="footer-link footer-link--muted">
       <span aria-hidden="true">❓</span> Centro de ayuda
-    </button>
-    <button type="button" class="footer-link footer-link--muted">
-      <span aria-hidden="true">🚪</span> Cerrar sesión
     </button>
   </div>
 </div>

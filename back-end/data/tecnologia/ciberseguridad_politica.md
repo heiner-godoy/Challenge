@@ -1,9 +1,16 @@
 # Política de Ciberseguridad e IT - Alura Tech 2026
 
+Resumen rápido:
+- Mantén tus credenciales seguras; usa 2FA siempre.
+- No instales software no autorizado; reporta incidentes a IT.
+
 ## 1. Gestión de Contraseñas y Acceso
-- Todas las contraseñas corporativas deben renovarse cada 90 días.
-- Es obligatorio el uso de Autenticación de Doble Factor (2FA) en Google Workspace y accesos VPN.
+- Rotación de contraseñas: cada 90 días.
+- Requisito: Autenticación de Doble Factor (2FA) en Google Workspace y accesos VPN.
 
 ## 2. Uso de Dispositivos y Software
-- Está prohibido instalar software no autorizado en las computadoras de la empresa.
-- Ante la sospecha de cualquier incidente de seguridad, reportar inmediatamente a it@aluratech.com.
+- Prohibido instalar software sin autorización del equipo de IT.
+- Reporte de incidentes: ante cualquier sospecha, escribe a it@aluratech.com inmediatamente.
+
+Consejo práctico:
+- Si pierdes un dispositivo o detectas actividad sospechosa, bloquea tu cuenta y avisa a IT de inmediato.

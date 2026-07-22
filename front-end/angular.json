@@ -42,6 +42,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": { "buildTarget": "nexus-agent-ui:build:production" },
             "development": { "buildTarget": "nexus-agent-ui:build:development" }

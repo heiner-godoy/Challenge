@@ -1,10 +1,17 @@
 # Políticas de Recursos Humanos - Alura Tech 2026
 
+Resumen rápido:
+- Jornada: 40 horas semanales.
+- Modalidad híbrida con hasta 2 días remotos por semana.
+
 ## 1. Horario de Trabajo y Modalidad Híbrida
-- La jornada laboral estándar es de 40 horas semanales, de lunes a viernes de 8:00 AM a 5:00 PM.
-- Todos los colaboradores tienen derecho a 2 días de trabajo remoto (Home Office) por semana (martes y jueves), previa coordinación con su líder directo.
+- Jornada estándar: 40 horas, lunes a viernes, 08:00–17:00.
+- Trabajo remoto: hasta 2 días a la semana, coordinados con el líder.
 
 ## 2. Solicitud de Vacaciones
-- Los colaboradores tienen derecho a 15 días hábiles de vacaciones pagadas tras cumplir un año continuo en la compañía.
-- La solicitud debe ingresarse en el portal de RRHH con al menos 15 días de anticipación.
-- Responsable de aprobación: Departamento de Recursos Humanos (rh@aluratech.com).
+- Derecho: 15 días hábiles de vacaciones pagadas tras 1 año continuo.
+- Procedimiento: registrar la solicitud en el portal de RRHH con mínimo 15 días de antelación.
+- Aprobación: Departamento de Recursos Humanos (rh@aluratech.com).
+
+Consejo práctico:
+- Si necesitas cambiar fechas por motivos urgentes, contacta a tu líder y a RRHH lo antes posible.

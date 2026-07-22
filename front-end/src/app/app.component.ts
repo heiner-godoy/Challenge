@@ -1,23 +1,27 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { ThemeService } from './core/theme.service';
 
 @Component({
   selector: 'nexus-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  readonly mobileMenuOpen = signal(false);
+  readonly theme = inject(ThemeService);
+  // `collapsed` controla una sidebar reducida (icon-only). No removemos la barra del DOM.
+  collapsed = false;
 
-  toggleMenu(): void {
-    this.mobileMenuOpen.update((v) => !v);
+  onCloseSidebar(): void {
+    // Al cerrar desde la propia barra la colapsamos en lugar de eliminarla.
+    this.collapsed = true;
   }
 
-  closeMenu(): void {
-    this.mobileMenuOpen.set(false);
+  onToggleSidebar(): void {
+    this.collapsed = !this.collapsed;
   }
 }
