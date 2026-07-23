@@ -71,6 +71,10 @@ class DocumentSource(BaseModel):
         default="soporte@aluratech.com",
         description="Correo electrónico del responsable oficial del documento (Ownership)"
     )
+    author: Optional[str] = Field(
+        default=None,
+        description="Autor del documento cuando está disponible en metadatos del archivo",
+    )
     location: str = Field(
         default="General",
         description="Ubicación exacta dentro del documento (Página X, Diapositiva Y, Hoja Z - Fila N, Sección W)"
@@ -134,3 +138,35 @@ class IngestResponse(BaseModel):
         ...,
         description="Mensaje explicativo del resultado del proceso de ingesta"
     )
+    files_skipped_draft: int = Field(default=0, description="Archivos omitidos por parecer borrador o copia")
+    files_skipped_duplicate: int = Field(default=0, description="Archivos duplicados omitidos por hash de contenido")
+    files_skipped_unsupported: int = Field(default=0, description="Archivos con formato no soportado")
+    cache_hit: bool = Field(default=False, description="True si el índice se cargó desde caché local")
+
+
+class UploadResponse(BaseModel):
+    status: str
+    saved_files: List[str] = Field(default_factory=list)
+    category_folder: str
+    message: str
+
+
+class DocumentInventoryItem(BaseModel):
+    filename: str
+    relative_path: str
+    category: str
+    owner: str
+    modified_at: str
+
+
+class DocumentsListResponse(BaseModel):
+    documents: List[DocumentInventoryItem]
+    total: int
+    categories: List[str]
+
+
+class SourcesMapResponse(BaseModel):
+    local_data_dir: str
+    extra_data_dirs: List[str] = Field(default_factory=list)
+    supported_formats: List[str] = Field(default_factory=list)
+    note: str

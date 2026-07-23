@@ -44,6 +44,9 @@ except ImportError:
     OCR_AVAILABLE = False
 
 
+from app.services.category_registry import resolve_folder_metadata
+
+
 class DocumentChunk:
     """
     =============================================================================
@@ -63,7 +66,8 @@ class DocumentChunk:
         owner: str,
         chunk_id: int,
         location: str = "General",
-        modified_at: str = ""
+        modified_at: str = "",
+        author: str = "",
     ):
         self.content = content         # Texto del fragmento limpio
         self.source = source           # Nombre del archivo fuente (ej: manual_rh.pdf)
@@ -72,6 +76,7 @@ class DocumentChunk:
         self.chunk_id = chunk_id       # ID secuencial del fragmento dentro del archivo
         self.location = location       # Ubicación exacta (ej: 'Página 3', 'Diapositiva 2')
         self.modified_at = modified_at # Fecha de modificación del archivo (YYYY-MM-DD)
+        self.author = author             # Autor del documento cuando está disponible en metadatos
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -81,8 +86,22 @@ class DocumentChunk:
             "owner": self.owner,
             "chunk_id": self.chunk_id,
             "location": self.location,
-            "modified_at": self.modified_at
+            "modified_at": self.modified_at,
+            "author": self.author,
         }
+
+    @staticmethod
+    def from_dict(data: Dict[str, Any]) -> "DocumentChunk":
+        return DocumentChunk(
+            content=data["content"],
+            source=data["source"],
+            category=data["category"],
+            owner=data.get("owner", "soporte@aluratech.com"),
+            chunk_id=int(data.get("chunk_id", 0)),
+            location=data.get("location", "General"),
+            modified_at=data.get("modified_at", ""),
+            author=data.get("author", ""),
+        )
 
 
 class DocumentLoader:
@@ -101,25 +120,24 @@ class DocumentLoader:
     4. Atribución de metadatos: Asignación de categoría, ownership, ubicación exacta y fechas.
     """
 
-    CATEGORY_MAPPING = {
-        "rh": ("Recursos Humanos", "rh@aluratech.com"),
-        "recursos_humanos": ("Recursos Humanos", "rh@aluratech.com"),
-        "financiero": ("Finanzas y Presupuestos", "finanzas@aluratech.com"),
-        "finanzas": ("Finanzas y Presupuestos", "finanzas@aluratech.com"),
-        "juridico": ("Legal y Compliance", "legal@aluratech.com"),
-        "legal": ("Legal y Compliance", "legal@aluratech.com"),
-        "operaciones": ("Operaciones y Procesos", "operaciones@aluratech.com"),
-        "tecnologia": ("Tecnología y Ciberseguridad", "it@aluratech.com"),
-        "it": ("Tecnología y Ciberseguridad", "it@aluratech.com")
-    }
-
     @staticmethod
     def infer_metadata_from_path(file_path: str) -> Tuple[str, str]:
         """Deduce Categoría y Responsable oficial según la subcarpeta fuente."""
         parent_dir = os.path.basename(os.path.dirname(file_path)).lower()
-        if parent_dir in DocumentLoader.CATEGORY_MAPPING:
-            return DocumentLoader.CATEGORY_MAPPING[parent_dir]
-        return ("General Corporativo", "soporte@aluratech.com")
+        return resolve_folder_metadata(parent_dir)
+
+    @staticmethod
+    def extract_document_author(file_path: str) -> str:
+        """Lee autor desde metadatos del archivo cuando el formato lo expone (Word)."""
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext == ".docx" and DocxDocument:
+            try:
+                doc = DocxDocument(file_path)
+                author = (doc.core_properties.author or "").strip()
+                return author
+            except Exception:
+                return ""
+        return ""
 
     @staticmethod
     def get_file_modified_date(file_path: str) -> str:
@@ -172,9 +190,9 @@ class DocumentLoader:
 
         if ext == ".pdf":
             return DocumentLoader._read_pdf_structured(file_path)
-        elif ext in [".docx", ".doc"]:
+        elif ext == ".docx":
             return DocumentLoader._read_docx_structured(file_path)
-        elif ext in [".pptx", ".ppt"]:
+        elif ext == ".pptx":
             return DocumentLoader._read_pptx_structured(file_path)
         elif ext in [".xlsx", ".xls"]:
             return DocumentLoader._read_excel_structured(file_path)
@@ -428,7 +446,29 @@ class DocumentLoader:
     # =========================================================================
 
     @staticmethod
-    def process_and_chunk_file(file_path: str, chunk_size: int = 500, overlap: int = 100) -> List[DocumentChunk]:
+    def _chunk_text_with_overlap(text: str, chunk_size: int, overlap: int) -> List[str]:
+        """Divide texto por caracteres con solapamiento (overlap)."""
+        if not text:
+            return []
+        if len(text) <= chunk_size:
+            return [text]
+
+        chunks: List[str] = []
+        start = 0
+        while start < len(text):
+            end = min(start + chunk_size, len(text))
+            chunks.append(text[start:end].strip())
+            if end >= len(text):
+                break
+            start += max(1, chunk_size - overlap)
+        return [c for c in chunks if c]
+
+    @staticmethod
+    def process_and_chunk_file(
+        file_path: str,
+        chunk_size: int = 1000,
+        overlap: int = 150,
+    ) -> List[DocumentChunk]:
         """
         PROCESAMIENTO COMPLETO DE INGESTA (FASE 1 A 4):
         1. Extracción por formato (PDF, Word, PPTX, Excel, CSV, JSON, HTML, MD)
@@ -439,6 +479,7 @@ class DocumentLoader:
         filename = os.path.basename(file_path)
         category, owner = DocumentLoader.infer_metadata_from_path(file_path)
         modified_at = DocumentLoader.get_file_modified_date(file_path)
+        author = DocumentLoader.extract_document_author(file_path)
 
         structured_blocks = DocumentLoader.load_and_structure_file(file_path)
         if not structured_blocks:
@@ -451,16 +492,7 @@ class DocumentLoader:
             text = block["content"]
             location = block["location"]
 
-            words = text.split()
-            if not words:
-                continue
-
-            # División en fragmentos de tamaño fijo (~150-250 palabras / 500-1000 caracteres) con overlap
-            i = 0
-            while i < len(words):
-                chunk_words = words[i:i + chunk_size]
-                chunk_text = " ".join(chunk_words)
-
+            for chunk_text in DocumentLoader._chunk_text_with_overlap(text, chunk_size, overlap):
                 all_chunks.append(DocumentChunk(
                     content=chunk_text,
                     source=filename,
@@ -468,13 +500,9 @@ class DocumentLoader:
                     owner=owner,
                     chunk_id=global_chunk_id,
                     location=location,
-                    modified_at=modified_at
+                    modified_at=modified_at,
+                    author=author,
                 ))
                 global_chunk_id += 1
-
-                step = chunk_size - overlap
-                if step <= 0:
-                    step = chunk_size
-                i += step
 
         return all_chunks

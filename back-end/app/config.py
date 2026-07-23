@@ -63,6 +63,21 @@ class Settings(BaseSettings):
         description="Ruta relativa o absoluta donde se almacenan los documentos corporativos por categorías"
     )
 
+    EXTRA_DATA_DIRS: str = Field(
+        default="",
+        description="Rutas adicionales separadas por coma para mapeo de fuentes locales (Etapa 1)",
+    )
+
+    CHUNK_SIZE_CHARS: int = Field(
+        default=1000,
+        description="Tamaño máximo de cada fragmento en caracteres (Etapa 2)",
+    )
+
+    CHUNK_OVERLAP_CHARS: int = Field(
+        default=150,
+        description="Solapamiento entre fragmentos consecutivos en caracteres (Etapa 2)",
+    )
+
     # ---------------------------------------------------------------------------
     # BLOQUE 4: CONFIGURACIÓN DE LECTURA DE ENTORNO (.env)
     # ---------------------------------------------------------------------------

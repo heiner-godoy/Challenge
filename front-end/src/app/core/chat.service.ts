@@ -1,8 +1,33 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { Area, AgentStatus, ChatMessage, ConversationSummary, SourceRef } from '../models/models';
+import { Area, AreaId, AgentStatus, ChatMessage, ConversationSummary, SourceRef } from '../models/models';
+
+export const AREA_FOLDER_SLUG: Record<AreaId, string> = {
+  legal: 'juridico',
+  operacional: 'operaciones',
+  financiero: 'financiero',
+  comunicacion: 'comunicacion',
+  logistica: 'logistica',
+  rrhh: 'rh',
+  marketing: 'marketing',
+  datos: 'tecnologia',
+  id: 'id',
+  calidad: 'calidad',
+  estrategico: 'estrategico',
+};
+
+export function areaIdToUploadCategory(area: AreaId | 'general' | null): string {
+  if (!area || area === 'general') return 'general';
+  return AREA_FOLDER_SLUG[area] ?? area;
+}
+
+export function areaIdToCategoryFilter(area: AreaId | null): string | undefined {
+  if (!area) return undefined;
+  return area;
+}
 
 const API_CHAT = '/api/chat';
+const API_HEALTH = '/api/health';
 
 export const AREAS: Area[] = [
   { id: 'legal', label: 'Legal', icon: '⚖️' },
@@ -109,13 +134,30 @@ const MOCK_ANSWERS: Record<string, MockAnswer> = {
 export class ChatService {
   readonly messages = signal<ChatMessage[]>([]);
   readonly status = signal<AgentStatus>('idle');
-  readonly documentCount = signal(47);
+  readonly documentCount = signal(0);
   readonly queriesToday = signal(12);
-  readonly lastUpdatedLabel = signal('hace 2 horas');
+  readonly lastUpdatedLabel = signal('—');
   readonly history = signal<ConversationSummary[]>(MOCK_HISTORY);
   readonly selectedArea = signal<string | null>(null);
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {
+    this.refreshOperationalStats();
+  }
+
+  refreshOperationalStats(): void {
+    this.http
+      .get<{ documents_on_disk?: number; documents_indexed?: number }>(API_HEALTH)
+      .subscribe({
+        next: (health) => {
+          const count = health.documents_on_disk ?? health.documents_indexed ?? 0;
+          this.documentCount.set(count);
+          this.lastUpdatedLabel.set('sincronizado con el backend');
+        },
+        error: () => {
+          this.lastUpdatedLabel.set('backend no disponible');
+        },
+      });
+  }
 
   sendMessage(text: string): void {
     const trimmed = text.trim();
@@ -134,7 +176,7 @@ export class ChatService {
     const requestStart = performance.now();
     const requestBody = {
       message: trimmed,
-      category: this.selectedArea() ?? undefined,
+      category: areaIdToCategoryFilter(this.selectedArea()),
       history: this.messages().map((message) => ({
         role: message.role === 'user' ? 'user' : 'assistant',
         content: message.text,

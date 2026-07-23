@@ -1,8 +1,16 @@
 <section class="upload">
   <header class="upload__header">
     <h2>📤 Subir nuevos documentos</h2>
-    <p>Arrastra archivos aquí o haz clic para seleccionar</p>
+    <p>Arrastra archivos aquí o haz clic para seleccionar. Elige el área responsable antes de indexar.</p>
   </header>
+
+  <label class="upload__area-label" for="upload-area">Área / categoría</label>
+  <select id="upload-area" class="upload__area-select" (change)="onCategoryChange($event)">
+    <option value="general">General Corporativo</option>
+    <option *ngFor="let area of areas" [value]="area.id" [selected]="uploadCategory() === area.id">
+      {{ area.icon }} {{ area.label }}
+    </option>
+  </select>
 
   <label
     class="dropzone"
@@ -36,8 +44,8 @@
     </li>
   </ul>
 
-  <button type="button" class="upload__process-btn" (click)="processAll()">
-    🚀 Procesar e indexar documentos
+  <button type="button" class="upload__process-btn" (click)="processAll()" [disabled]="isProcessing()">
+    {{ isProcessing() ? '⏳ Indexando…' : '🚀 Procesar e indexar documentos' }}
   </button>
 
   <p class="upload__note">ℹ️ Los documentos se procesarán y estarán disponibles en unos minutos.</p>
