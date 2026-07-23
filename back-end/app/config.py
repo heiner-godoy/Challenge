@@ -79,6 +79,24 @@ class Settings(BaseSettings):
     )
 
     # ---------------------------------------------------------------------------
+    # BLOQUE 5: VECTOR STORE / PERSISTENCIA EXTERNA
+    # ---------------------------------------------------------------------------
+    VECTOR_STORE: str = Field(
+        default="local",
+        description="Modo de almacenamiento de vectores: 'local' o 'pgvector'",
+    )
+
+    DATABASE_URL: str = Field(
+        default="",
+        description="URL de conexión a Postgres (ej: postgres://user:pass@host:5432/dbname)",
+    )
+
+    PGVECTOR_TABLE: str = Field(
+        default="pg_vector_embeddings",
+        description="Nombre de la tabla donde guardar embeddings cuando VECTOR_STORE=pgvector",
+    )
+
+    # ---------------------------------------------------------------------------
     # BLOQUE 4: CONFIGURACIÓN DE LECTURA DE ENTORNO (.env)
     # ---------------------------------------------------------------------------
     model_config = SettingsConfigDict(

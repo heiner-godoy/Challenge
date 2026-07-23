@@ -186,3 +186,19 @@ Para probar rápidamente la carga de la aplicación y la inicialización de los 
 source .venv/bin/activate
 python -c "from app.main import app; print('✅ Aplicación Backend lista e inicializada sin errores.')"
 ```
+
+## 🔁 Integración con Vector DB (Qdrant / pgvector)
+
+Este repositorio incluye persistencia local del índice vectorial en `data/.rag_cache` para acelerar reinicios. Si deseas integrar un vector database escalable, sigue estas recomendaciones:
+
+- Opción Qdrant (nube o self-hosted): instala `qdrant-client` y configura `VECTOR_STORE=qdrant` junto con `QDRANT_URL` y `QDRANT_API_KEY`.
+- Opción Postgres + pgvector: instala `psycopg2-binary` y configura conexión `DATABASE_URL` apuntando a una base con la extensión `pgvector`.
+
+Se ha añadido un adaptador inicial `app/services/vector_store.py` como punto de extensión. La integración completa requiere decisiones de esquema (colección/index) y credenciales de despliegue.
+
+Si quieres, puedo:
+
+- Implementar la integración completa con Qdrant (crear colección, serializar metadatos y empujar embeddings). 
+- O bien implementar almacenado en Postgres/pgvector con índices HNSW y filtros por metadatos.
+
+Indica cuál opción prefieres y la creo en esta rama.

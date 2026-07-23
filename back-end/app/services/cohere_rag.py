@@ -9,6 +9,8 @@ from app.services.category_registry import category_matches, list_business_categ
 from app.services.document_loader import DocumentChunk, DocumentLoader
 from app.services.ingest_curation import SKIP_DIR_NAMES, CurationStats, curate_file_paths
 from app.services.rag_cache import build_manifest, load_index, save_index
+from app.services.vector_store import VectorStore
+from app.services import pgvector_store
 
 
 class IngestResult:
@@ -160,6 +162,13 @@ class CohereRAGService:
                     self.embeddings,
                     settings.COHERE_EMBEDDING_MODEL,
                 )
+                # Persistir en vector DB si está configurado
+                if settings.VECTOR_STORE == "pgvector":
+                    try:
+                        pgvector_store.upsert_many([c.to_dict() for c in all_chunks], self.embeddings)
+                        print("[CohereRAGService] ✅ Embeddings subidos a pgvector.")
+                    except Exception as e:
+                        print(f"[CohereRAGService] ⚠️ Error subiendo embeddings a pgvector: {e}")
                 print(
                     f"[CohereRAGService] ✅ Indexación completada. "
                     f"Categorías: {len(self.categories)}. Shape: {self.embeddings.shape}"
@@ -214,6 +223,14 @@ class CohereRAGService:
                 input_type="search_query",
             )
             query_embedding = np.array(query_response.embeddings[0], dtype=np.float32)
+
+            # Si usamos pgvector, delegar la búsqueda al motor externo
+            if settings.VECTOR_STORE == "pgvector":
+                try:
+                    remote_results = pgvector_store.search(query_embedding, top_k=top_k, category_filter=category_filter)
+                    return remote_results
+                except Exception as e:
+                    print(f"[CohereRAGService] ⚠️ Error buscando en pgvector: {e}")
 
             cand_embeddings = self.embeddings[candidate_indices]
             norm_query = np.linalg.norm(query_embedding)
