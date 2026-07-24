@@ -1,11 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ChatService } from '../../core/chat.service';
 
 @Component({
   selector: 'nexus-history-view',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './history-view.component.html',
   styleUrl: './history-view.component.scss',
 })

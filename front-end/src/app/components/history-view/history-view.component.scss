@@ -4,6 +4,16 @@
   padding: 32px 24px;
 }
 
+.back-to-chat {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--color-secondary);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.back-to-chat:hover { color: var(--text-primary); }
+
 h2 { font-size: 20px; margin-bottom: 18px; }
 
 .group {

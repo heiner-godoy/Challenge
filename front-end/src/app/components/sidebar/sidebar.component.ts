@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AREAS, ChatService } from '../../core/chat.service';
 import { ThemeService } from '../../core/theme.service';
+import { AreaId } from '../../models/models';
 
 @Component({
   selector: 'nexus-sidebar',
@@ -21,7 +22,7 @@ export class SidebarComponent {
   readonly areas = AREAS;
   readonly selectedArea = this.chat.selectedArea;
 
-  selectArea(id: string): void {
+  selectArea(id: AreaId): void {
     this.selectedArea.set(this.selectedArea() === id ? null : id);
     this.navigate.emit();
   }

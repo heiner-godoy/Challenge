@@ -4,6 +4,16 @@
   padding: 32px 24px;
 }
 
+.back-to-chat {
+  display: inline-block;
+  margin-bottom: 22px;
+  color: var(--color-secondary);
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.back-to-chat:hover { color: var(--text-primary); }
+
 .upload__header {
   margin-bottom: 20px;
 
@@ -40,7 +50,9 @@
   margin: 20px 0 0;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  max-height: min(42vh, 360px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .doc-row {

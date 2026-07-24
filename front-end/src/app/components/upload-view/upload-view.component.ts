@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { KnowledgeDoc, AreaId } from '../../models/models';
 import { AREAS, ChatService, areaIdToUploadCategory } from '../../core/chat.service';
@@ -18,7 +19,7 @@ interface DocumentInventoryResponse {
 @Component({
   selector: 'nexus-upload-view',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './upload-view.component.html',
   styleUrl: './upload-view.component.scss',
 })

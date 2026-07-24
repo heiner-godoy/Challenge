@@ -1,80 +1,12 @@
-<section class="chat">
-  <header class="chat-header">
-    <div>
-      <h2 class="chat-header__title">Nexus <span class="status-dot" aria-hidden="true">●</span></h2>
-    </div>
-    <div class="microcopies">
-      <div class="microcopies__row">
-        <button type="button" class="microcopy" *ngFor="let s of suggestions" (click)="useSuggestion(s)">
-          {{ s }}
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <div class="chat-body">
-    <ng-container *ngIf="messages().length === 0; else conversation">
-      <div class="welcome">
-        <div class="welcome__avatar" aria-hidden="true">🤖</div>
-        <h3>¡Hola, soy Nexus!</h3>
-        <p class="welcome__subtitle">Tu asistente inteligente de conocimiento corporativo de NexusShop</p>
-
-        <ul class="welcome__list">
-          <li>✅ Políticas y procedimientos</li>
-          <li>✅ Preguntas sobre beneficios</li>
-          <li>✅ Información de productos y envíos</li>
-          <li>✅ Contactos y estructura organizacional</li>
-        </ul>
-
-        <button type="button" class="welcome__cta" (click)="useSuggestion(suggestions[0])">
-          Comenzar a chatear
-        </button>
-
-        <p class="welcome__tip">💡 Consejo: sé específico en tus preguntas para obtener mejores respuestas</p>
-      </div>
-    </ng-container>
-
-    <ng-template #conversation>
-      <div class="messages" role="log" aria-live="polite">
-        <nexus-chat-message *ngFor="let m of messages()" [message]="m"></nexus-chat-message>
-
-        <div class="typing" *ngIf="status() === 'searching'">
-          <span class="typing__spinner" aria-hidden="true"></span>
-          Buscando respuestas...
-        </div>
-
-        <div #scrollAnchor></div>
-      </div>
-    </ng-template>
-  </div>
-
-  <div class="composer">
-    <div class="composer__input-row">
-      <a routerLink="/documentos" class="icon-btn" title="Adjuntar documento" aria-label="Adjuntar documento">📎</a>
-      <label class="visually-hidden" for="chat-input">Escribe tu pregunta</label>
-      <textarea
-        id="chat-input"
-        rows="1"
-        [(ngModel)]="draft"
-        [maxlength]="maxChars"
-        placeholder="Escribe tu pregunta"
-        (keydown.enter)="$event.preventDefault(); send()"
-      ></textarea>
-
-      <button
-        type="button"
-        class="send-btn"
-        [class.send-btn--loading]="status() === 'searching'"
-        [disabled]="!draft.trim() || draft.length > maxChars"
-        (click)="send()"
-        aria-label="Enviar"
-      >
-        <span *ngIf="status() !== 'searching'; else spinner">➤</span>
-        <ng-template #spinner><span class="spinner" aria-hidden="true"></span></ng-template>
-      </button>
-    </div>
-    <p class="composer__counter" *ngIf="draft.length > maxChars * 0.9">
-      {{ draft.length }} / {{ maxChars }}
-    </p>
+<section class="dashboard">
+  <header class="dashboard__header"><div><p class="eyebrow">CHAT RAG / BASE DE CONOCIMIENTO</p><h1>Asistente de conocimiento <span>✦</span></h1><p class="subtitle">Consulta tus documentos corporativos con respuestas fundamentadas y fuentes verificables.</p></div><button class="primary-action" routerLink="/documentos"><span>＋</span> Añadir documentos</button></header>
+  <article class="panel chat-panel chat-panel--top"><div class="panel-heading"><div><p class="eyebrow">ASISTENTE NEXUS</p><h2>Pregunta a tu base de conocimiento</h2></div><span class="live-tag"><i></i> LISTO</span></div><div class="chat-thread" role="log" aria-live="polite"><ng-container *ngIf="messages().length === 0"><div class="chat-welcome"><span class="chat-welcome__icon">✦</span><div><strong>¿En qué puedo ayudarte?</strong><p>Pregunta sobre políticas, procedimientos, beneficios o cualquier documento indexado.</p></div></div><div class="suggestion-row"><button type="button" *ngFor="let suggestion of suggestions.slice(0, 3)" (click)="useSuggestion(suggestion)">{{ suggestion }}</button></div></ng-container><ng-container *ngIf="messages().length > 0"><nexus-chat-message *ngFor="let message of messages()" [message]="message" (feedback)="onFeedback(message.id, $event)"></nexus-chat-message><div class="typing" *ngIf="status() === 'searching'"><span class="typing__spinner"></span> Buscando en la base de conocimiento...</div><div #scrollAnchor></div></ng-container></div><div class="chat-composer"><a routerLink="/documentos" class="attach-action" aria-label="Adjuntar documento">＋</a><label class="visually-hidden" for="chat-input">Escribe una pregunta</label><textarea id="chat-input" rows="1" [(ngModel)]="draft" [maxlength]="maxChars" placeholder="Pregunta lo que necesites..." (keydown.enter)="$event.preventDefault(); send()"></textarea><button type="button" class="send-btn" [disabled]="!draft.trim() || draft.length > maxChars" (click)="send()" aria-label="Enviar mensaje"><span *ngIf="status() !== 'searching'; else spinner">↑</span><ng-template #spinner><span class="spinner"></span></ng-template></button></div><p class="chat-disclaimer">Nexus responde usando tus documentos indexados y muestra las fuentes consultadas.</p></article>
+  <div class="dashboard-tools">
+    <article class="panel context-panel">
+      <span class="context-icon">▣</span>
+      <div><p class="eyebrow">BASE DISPONIBLE</p><strong>{{ documentCount() }} documentos indexados</strong><p>El agente consultará esta base para responder.</p></div>
+    </article>
+    <a class="panel tool-link" routerLink="/documentos"><span class="context-icon">↥</span><div><p class="eyebrow">GESTIONAR</p><strong>Ver documentos</strong><p>Consultar o indexar archivos.</p></div><span class="tool-arrow">→</span></a>
+    <a class="panel tool-link" routerLink="/historial"><span class="context-icon">⌁</span><div><p class="eyebrow">CONVERSACIONES</p><strong>Ver historial</strong><p>Retomar una consulta anterior.</p></div><span class="tool-arrow">→</span></a>
   </div>
 </section>

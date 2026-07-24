@@ -79,6 +79,11 @@
   &__source {
     font-size: 12.5px;
     color: var(--text-secondary);
+
+    strong, span, small { display: block; }
+    strong { color: var(--text-primary); font-weight: 600; }
+    span { font-size: 11px; }
+    small { font-size: 10px; margin-top: 2px; }
   }
 
   &__meta {
@@ -96,7 +101,9 @@
   }
 }
 
-/* feedback UI removed for cleaner interface */
+.bubble__feedback { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 10px; }
+.bubble__feedback button { border: 1px solid var(--border-subtle); border-radius: 5px; background: transparent; color: var(--text-secondary); padding: 3px 8px; font-size: 10px; }
+.bubble__feedback button:hover, .bubble__feedback button.selected { border-color: var(--color-secondary); color: var(--color-secondary); }
 .chip {
   border: 1px solid rgba(255,255,255,0.03);
   background: rgba(255,255,255,0.01);

@@ -1,0 +1,40 @@
+{
+  "embedding_model": "embed-multilingual-v3.0",
+  "manifest": [
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/beneficios_empleados.csv",
+      "hash": "2eecee62f314d14a7092ec19a783061f34e7e1b4b5e950b205db3060b21456aa",
+      "mtime": 1784700806.1226313
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/financiero/beneficios_presupuestos.csv",
+      "hash": "6796d03b2109406ab873ffa943b7c5465650e630d18f7041c2a0f4ff28326662",
+      "mtime": 1784701276.6645126
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/logistica/faq_envios.md",
+      "hash": "2c15b90d8623e049380f69f5c3ce13df61435058348b63886f23a15efd3bc046",
+      "mtime": 1784708166.346024
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/logistica/procedimiento_rastreo_pedidos.md",
+      "hash": "083d7c169d39fc0bb50d61de0b450e4c1705a450c1aaa1d344287df728e1d431",
+      "mtime": 1784708166.346024
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/politicas_empresa.md",
+      "hash": "d83bf1c48aa6e55a8b24332c8393db87d0f1876db5f8f878a9b1e0399affa132",
+      "mtime": 1784707791.5786145
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/rh/politicas_vacaciones_remoto.md",
+      "hash": "7a8cdd6024e19aede790e5c898ea71d1b637573e0fdd3a4e0071aa8be391e28c",
+      "mtime": 1784707803.530359
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/tecnologia/ciberseguridad_politica.md",
+      "hash": "40a0076800c9cefdc60dc3a6b28fc4b5f81d4aafe62d82a8ea0034ebb322492b",
+      "mtime": 1784707810.4593577
+    }
+  ]
+}

@@ -11,7 +11,17 @@
 
       <div class="bubble__sources" *ngIf="message.sources?.length">
         <p class="bubble__sources-title">Fuentes</p>
-        <p class="bubble__source" *ngFor="let s of message.sources">• {{ s.fileName }} ({{ s.matchPercent }}%)</p>
+        <div class="bubble__source" *ngFor="let s of message.sources">
+          <strong>{{ s.fileName }}</strong> <span>({{ s.matchPercent }}%)</span>
+          <small *ngIf="s.category || s.location">{{ s.category }}<ng-container *ngIf="s.category && s.location"> · </ng-container>{{ s.location }}</small>
+          <small *ngIf="s.owner">Responsable: {{ s.owner }}</small>
+        </div>
+      </div>
+
+      <div class="bubble__feedback" aria-label="Valorar respuesta">
+        <span>¿Te resultó útil?</span>
+        <button type="button" [class.selected]="message.feedback === 'up'" (click)="onFeedback('up')">Sí</button>
+        <button type="button" [class.selected]="message.feedback === 'down'" (click)="onFeedback('down')">No</button>
       </div>
 
       <div class="bubble__meta">

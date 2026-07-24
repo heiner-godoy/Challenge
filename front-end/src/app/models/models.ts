@@ -20,6 +20,11 @@ export interface Area {
 export interface SourceRef {
   fileName: string;
   matchPercent: number;
+  category?: string;
+  owner?: string;
+  location?: string;
+  modifiedAt?: string | null;
+  excerpt?: string;
 }
 
 export type FeedbackValue = 'up' | 'down' | null;
