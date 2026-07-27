@@ -199,12 +199,6 @@ async def upload_documents(
             continue
         dest = os.path.join(target_dir, safe_name)
         skip, reason = should_skip_file(dest)
-        ext = os.path.splitext(safe_name)[1].lower()
-        if ext not in SUPPORTED_EXTENSIONS:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Formato no soportado: {ext or '(sin extensión)'} en {upload.filename}",
-            )
         if skip and reason == "draft":
             raise HTTPException(
                 status_code=400,
@@ -221,11 +215,23 @@ async def upload_documents(
     if not saved:
         raise HTTPException(status_code=400, detail="Ningún archivo válido fue guardado.")
 
+    try:
+        rag_service.ingest_directory(os.path.abspath(settings.DATA_DIR))
+    except Exception as exc:
+        print(f"[upload_documents] ⚠️ Error al reindexar documentos tras la carga: {exc}")
+        raise HTTPException(
+            status_code=500,
+            detail="El archivo se guardó, pero ocurrió un error al indexarlo. Revisa los logs del backend.",
+        )
+
     return UploadResponse(
         status="success",
         saved_files=saved,
         category_folder=folder_slug,
-        message=f"Se guardaron {len(saved)} archivo(s) en data/{folder_slug}. Ejecute /api/ingest para indexar.",
+        message=(
+            f"Se guardaron {len(saved)} archivo(s) en data/{folder_slug}."
+            " Se indexaron automáticamente."
+        ),
     )
 
 # ---------------------------------------------------------------------------
@@ -272,19 +278,21 @@ async def chat_endpoint(request: ChatRequest):
     )
 
     # Paso 3: Mapeo de fuentes citadas incluyendo Categoría, Ownership, Ubicación Exacta y Fecha
-    sources = [
-        DocumentSource(
-            filename=chunk["source"],
-            category=chunk["category"],
-            owner=chunk["owner"],
-            author=chunk.get("author") or None,
-            location=chunk.get("location", "General"),
-            modified_at=chunk.get("modified_at", ""),
-            excerpt=chunk["content"][:200] + "..." if len(chunk["content"]) > 200 else chunk["content"],
-            score=chunk["score"],
-        )
-        for chunk in relevant_chunks
-    ]
+    sources = []
+    if relevant_chunks:
+        sources = [
+            DocumentSource(
+                filename=chunk["source"],
+                category=chunk["category"],
+                owner=chunk["owner"],
+                author=chunk.get("author") or None,
+                location=chunk.get("location", "General"),
+                modified_at=chunk.get("modified_at", ""),
+                excerpt=chunk["content"][:200] + "..." if len(chunk["content"]) > 200 else chunk["content"],
+                score=chunk["score"],
+            )
+            for chunk in relevant_chunks
+        ]
 
     return ChatResponse(
         answer=answer_text,

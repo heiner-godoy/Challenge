@@ -75,6 +75,16 @@ Clase estática encargada de la carga, parseo, limpieza, fragmentación y metada
 ### 2. `CohereRAGService` ([`app/services/cohere_rag.py`](file:///home/heiner/repositorios-git/Challenge/back-end/app/services/cohere_rag.py))
 Gestiona el almacenamiento vectorial en memoria y utiliza el modelo `embed-multilingual-v3.0` de Cohere para calcular embeddings y realizar búsquedas de similitud coseno con filtrado por categorías.
 
+#### Capa de recuperación y reranking
+La recuperación es la parte central del pipeline RAG. En esta fase:
+1. La pregunta del usuario se convierte en un embedding que representa su significado.
+2. Ese embedding se compara con los embeddings de los fragmentos ya indexados para encontrar candidatos semánticamente similares.
+3. Se aplican filtros por metadatos como categoría, área responsable o fecha para reducir ruido y evitar devolver información obsoleta.
+4. Un paso adicional de reranking reevalúa los candidatos seleccionados y ordena los mejores fragmentos según su relevancia real para la consulta.
+5. Los fragmentos finales se ensamblan junto con sus metadatos de origen y se entregan al LLM como contexto.
+
+Esto importa porque una recuperación de baja calidad degrada la respuesta final: un LLM potente puede terminar respondiendo con algo impreciso si recibe fragmentos poco relevantes o incompletos.
+
 ### 3. `GroqService` ([`app/services/groq_service.py`](file:///home/heiner/repositorios-git/Challenge/back-end/app/services/groq_service.py))
 Encargado de la inferencia de lenguaje natural utilizando el modelo `llama-3.3-70b-versatile` en Groq. Garantiza el cumplimiento de las normas de gobernanza corporativa citando fuentes y responsables.
 
@@ -109,8 +119,12 @@ DATA_DIR=./data
 
 ### 4. Iniciar el Servidor de Desarrollo
 ```bash
+source .venv/bin/activate
 python main.py
 ```
+
+### 5. Probar el flujo completo
+Una vez que el backend esté levantado en `http://localhost:8000`, puedes abrir el frontend en `http://localhost:4200` para interactuar con el agente RAG desde la interfaz web y validar el flujo completo de consulta, recuperación y respuesta con fuentes.
 
 ---
 

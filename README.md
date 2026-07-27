@@ -100,7 +100,15 @@ flowchart TD
    - Embeddings multilingües con el modelo `embed-multilingual-v3.0` de Cohere.
    - Filtrado dinámico por categorías de negocio.
 
-5. **Inferencia Ultra-Rápida y Confiable (Groq LLM)**:
+5. **Capa de Recuperación y Reranking**:
+   - La pregunta del colaborador se transforma en un embedding para compararla semánticamente con los fragmentos ya indexados.
+   - La búsqueda vectorial devuelve los candidatos más cercanos, no solo por coincidencia literal de palabras, sino por significado.
+   - Antes o después de esa etapa se aplican filtros por metadatos como categoría, fecha o ownership para descartar información obsoleta o fuera de contexto.
+   - Luego entra en juego el reranking, que reevalúa los candidatos más prometedores con un criterio más preciso y reordena los resultados para conservar solo los fragmentos más útiles.
+   - Los fragmentos finales se ensamblan con sus metadatos de origen y se entregan al LLM como contexto para generar una respuesta fundamentada.
+   - Esta etapa es el corazón del RAG: si la recuperación es débil, incluso un LLM muy potente puede responder de forma imprecisa o inventar contenido.
+
+6. **Inferencia Ultra-Rápida y Confiable (Groq LLM)**:
    - Generación de respuestas concisas y amables utilizando `llama-3.3-70b-versatile` servido por la infraestructura LPU de Groq.
    - Principio "Garbage in, garbage out": Si la información no está en las fuentes oficiales, aconseja contactar al responsable del área.
 
@@ -181,10 +189,20 @@ DATA_DIR=./data
 
 ### 4. Ejecutar el Servidor Backend
 ```bash
+cd back-end
+source .venv/bin/activate
 python main.py
 ```
 El servidor se iniciará en `http://localhost:8000`. Puedes acceder a la documentación interactiva Swagger UI en:
 👉 `http://localhost:8000/docs`
+
+### 5. Ejecutar el Frontend Web
+```bash
+cd front-end
+npm install
+npm start
+```
+La interfaz queda disponible en `http://localhost:4200` y se comunica con el backend mediante el proxy configurado en `front-end/proxy.conf.json`.
 
 ---
 

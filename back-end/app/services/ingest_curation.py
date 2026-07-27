@@ -8,13 +8,13 @@ from dataclasses import dataclass
 from typing import Dict, Iterable, List, Tuple
 
 SUPPORTED_EXTENSIONS = {
-    ".pdf", ".docx", ".pptx", ".xlsx", ".xls", ".csv", ".json", ".html", ".htm", ".md", ".txt",
+    ".pdf", ".docx", ".odt", ".pptx", ".xlsx", ".xls", ".csv", ".json", ".html", ".htm", ".md", ".txt",
 }
 
 SKIP_DIR_NAMES = {".rag_cache", "__pycache__", ".git", "node_modules"}
 
 DRAFT_PATTERN = re.compile(
-    r"(?i)(^|[\s_\-])(borrador|draft|tmp|temp|copia|copy|old|backup|prueba|test)([\s_\-]|\.|$)"
+    r"(?i)(^|[\s_\-])(borrador|draft|tmp|temp|copia|copy|old|backup)([\s_\-]|\.|$)"
 )
 
 IGNORE_FILENAMES = {".ds_store", "thumbs.db", "desktop.ini"}
@@ -49,12 +49,11 @@ def should_skip_file(file_path: str) -> Tuple[bool, str]:
         return True, "hidden"
 
     ext = os.path.splitext(name)[1].lower()
-    if ext not in SUPPORTED_EXTENSIONS:
-        return True, "unsupported"
-
     if DRAFT_PATTERN.search(name):
         return True, "draft"
 
+    # Se permiten todos los formatos de archivo en la carga;
+    # la indexación intentará extraer texto de formatos conocidos o texto plano.
     return False, ""
 
 

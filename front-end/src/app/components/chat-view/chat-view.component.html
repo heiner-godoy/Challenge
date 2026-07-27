@@ -1,12 +1,74 @@
 <section class="dashboard">
-  <header class="dashboard__header"><div><p class="eyebrow">CHAT RAG / BASE DE CONOCIMIENTO</p><h1>Asistente de conocimiento <span>✦</span></h1><p class="subtitle">Consulta tus documentos corporativos con respuestas fundamentadas y fuentes verificables.</p></div><button class="primary-action" routerLink="/documentos"><span>＋</span> Añadir documentos</button></header>
-  <article class="panel chat-panel chat-panel--top"><div class="panel-heading"><div><p class="eyebrow">ASISTENTE NEXUS</p><h2>Pregunta a tu base de conocimiento</h2></div><span class="live-tag"><i></i> LISTO</span></div><div class="chat-thread" role="log" aria-live="polite"><ng-container *ngIf="messages().length === 0"><div class="chat-welcome"><span class="chat-welcome__icon">✦</span><div><strong>¿En qué puedo ayudarte?</strong><p>Pregunta sobre políticas, procedimientos, beneficios o cualquier documento indexado.</p></div></div><div class="suggestion-row"><button type="button" *ngFor="let suggestion of suggestions.slice(0, 3)" (click)="useSuggestion(suggestion)">{{ suggestion }}</button></div></ng-container><ng-container *ngIf="messages().length > 0"><nexus-chat-message *ngFor="let message of messages()" [message]="message" (feedback)="onFeedback(message.id, $event)"></nexus-chat-message><div class="typing" *ngIf="status() === 'searching'"><span class="typing__spinner"></span> Buscando en la base de conocimiento...</div><div #scrollAnchor></div></ng-container></div><div class="chat-composer"><a routerLink="/documentos" class="attach-action" aria-label="Adjuntar documento">＋</a><label class="visually-hidden" for="chat-input">Escribe una pregunta</label><textarea id="chat-input" rows="1" [(ngModel)]="draft" [maxlength]="maxChars" placeholder="Pregunta lo que necesites..." (keydown.enter)="$event.preventDefault(); send()"></textarea><button type="button" class="send-btn" [disabled]="!draft.trim() || draft.length > maxChars" (click)="send()" aria-label="Enviar mensaje"><span *ngIf="status() !== 'searching'; else spinner">↑</span><ng-template #spinner><span class="spinner"></span></ng-template></button></div><p class="chat-disclaimer">Nexus responde usando tus documentos indexados y muestra las fuentes consultadas.</p></article>
-  <div class="dashboard-tools">
-    <article class="panel context-panel">
-      <span class="context-icon">▣</span>
-      <div><p class="eyebrow">BASE DISPONIBLE</p><strong>{{ documentCount() }} documentos indexados</strong><p>El agente consultará esta base para responder.</p></div>
-    </article>
-    <a class="panel tool-link" routerLink="/documentos"><span class="context-icon">↥</span><div><p class="eyebrow">GESTIONAR</p><strong>Ver documentos</strong><p>Consultar o indexar archivos.</p></div><span class="tool-arrow">→</span></a>
-    <a class="panel tool-link" routerLink="/historial"><span class="context-icon">⌁</span><div><p class="eyebrow">CONVERSACIONES</p><strong>Ver historial</strong><p>Retomar una consulta anterior.</p></div><span class="tool-arrow">→</span></a>
+  <header class="dashboard__header">
+    <div>
+      <p class="eyebrow">CHAT WEB ACCESIBLE</p>
+      <h1>Consola Nexus <span>⚡</span></h1>
+      <p class="subtitle">Canal simple para consultar políticas, procedimientos y documentos con un agente de IA.</p>
+    </div>
+    <div class="dashboard-actions">
+      <a class="ghost-btn" routerLink="/history">Historial</a>
+      <button class="primary-action" type="button" (click)="startNewSession()">Nueva conversación</button>
+      <button class="primary-action primary-action--secondary" type="button" (click)="scrollToUpload()"><span>＋</span> Subir documento</button>
+    </div>
+  </header>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-main">
+      <article class="panel chat-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">ASISTENTE NEXUS</p>
+            <h2>Pregunta a tu base de conocimiento</h2>
+          </div>
+          <span class="live-tag"><i></i> IA ACTIVA</span>
+        </div>
+
+        <div class="chat-thread" role="log" aria-live="polite">
+          <ng-container *ngIf="messages().length === 0">
+            <div class="chat-welcome">
+              <span class="chat-welcome__icon">✦</span>
+              <div>
+                <strong>¿En qué puedo ayudarte?</strong>
+                <p>Soy un agente de IA que responde con base en documentos internos y muestra las fuentes usadas.</p>
+              </div>
+            </div>
+            <div class="suggestion-row">
+              <button type="button" *ngFor="let suggestion of suggestions.slice(0, 3)" (click)="useSuggestion(suggestion)">{{ suggestion }}</button>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="messages().length > 0">
+            <nexus-chat-message *ngFor="let message of messages()" [message]="message" (feedback)="onFeedback(message.id, $event)"></nexus-chat-message>
+            <div class="typing" *ngIf="status() === 'searching'"><span class="typing__spinner"></span> Buscando en la base de conocimiento...</div>
+            <div #scrollAnchor></div>
+          </ng-container>
+        </div>
+
+        <div class="chat-composer">
+          <label class="visually-hidden" for="chat-input">Escribe una pregunta</label>
+          <textarea id="chat-input" rows="1" [(ngModel)]="draft" [maxlength]="maxChars" placeholder="Escribe tu pregunta aquí..." (keydown.enter)="$event.preventDefault(); send()"></textarea>
+          <button type="button" class="send-btn" [disabled]="!draft.trim() || draft.length > maxChars" (click)="send()" aria-label="Enviar mensaje">
+            <span *ngIf="status() !== 'searching'; else spinner">↑</span>
+            <ng-template #spinner><span class="spinner"></span></ng-template>
+          </button>
+        </div>
+
+        <p class="chat-disclaimer">Las respuestas incluyen fuentes consultadas y un botón de feedback para mejorar el servicio.</p>
+      </article>
+    </div>
+
+    <aside class="dashboard-side">
+      <article class="panel context-panel">
+        <span class="context-icon">▣</span>
+        <div>
+          <p class="eyebrow">BASE DISPONIBLE</p>
+          <strong>{{ documentCount() }} documentos indexados</strong>
+          <p>El agente usa esta base para responder con contexto real y trazable.</p>
+        </div>
+      </article>
+      <article class="panel upload-embed" id="upload-panel">
+        <nexus-upload-view></nexus-upload-view>
+      </article>
+    </aside>
   </div>
 </section>

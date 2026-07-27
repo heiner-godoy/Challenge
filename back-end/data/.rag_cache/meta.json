@@ -7,6 +7,16 @@
       "mtime": 1784700806.1226313
     },
     {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/financiero/Cotizacion_PastoralSocial_Buenaventura _1_.docx",
+      "hash": "e7ded588b2222590ce4ae7c88a422d9507931f1a775183517ef45a92450eaf17",
+      "mtime": 1785137985.4425185
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/financiero/Cotizacion_PastoralSocial_Buenaventura.odt",
+      "hash": "dbd3cd40f498b7dbb956d6e16213001c3a58b41c557226fef43c820f62469aa3",
+      "mtime": 1785138110.4579096
+    },
+    {
       "path": "/home/heiner/repositorios-git/Challenge/back-end/data/financiero/beneficios_presupuestos.csv",
       "hash": "6796d03b2109406ab873ffa943b7c5465650e630d18f7041c2a0f4ff28326662",
       "mtime": 1784701276.6645126
@@ -35,6 +45,11 @@
       "path": "/home/heiner/repositorios-git/Challenge/back-end/data/tecnologia/ciberseguridad_politica.md",
       "hash": "40a0076800c9cefdc60dc3a6b28fc4b5f81d4aafe62d82a8ea0034ebb322492b",
       "mtime": 1784707810.4593577
+    },
+    {
+      "path": "/home/heiner/repositorios-git/Challenge/back-end/data/tecnologia/prueba_upload.md",
+      "hash": "9b396f8a61c648cb89699b7858457177145e06f59ea48d5582aca2b5f5037eb6",
+      "mtime": 1785133602.131499
     }
   ]
 }

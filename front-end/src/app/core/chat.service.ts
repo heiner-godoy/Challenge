@@ -2,6 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Area, AreaId, AgentStatus, ChatMessage, ConversationSummary } from '../models/models';
 
+declare global {
+  interface Window {
+    __APP_CONFIG__?: {
+      apiBaseUrl?: string;
+    };
+  }
+}
+
 export const AREA_FOLDER_SLUG: Record<AreaId, string> = {
   legal: 'juridico',
   operacional: 'operaciones',
@@ -26,8 +34,12 @@ export function areaIdToCategoryFilter(area: AreaId | null): string | undefined 
   return area;
 }
 
-const API_CHAT = '/api/chat';
-const API_HEALTH = '/api/health';
+const API_BASE_URL = (typeof window !== 'undefined' && window.__APP_CONFIG__?.apiBaseUrl)
+  ? window.__APP_CONFIG__.apiBaseUrl
+  : '/';
+
+const API_CHAT = `${API_BASE_URL}api/chat`;
+const API_HEALTH = `${API_BASE_URL}api/health`;
 
 export const AREAS: Area[] = [
   { id: 'legal', label: 'Legal', icon: '⚖️' },

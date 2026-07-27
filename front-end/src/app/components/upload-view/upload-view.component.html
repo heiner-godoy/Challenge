@@ -1,8 +1,7 @@
 <section class="upload">
-  <a routerLink="/" class="back-to-chat">← Volver al chat RAG</a>
   <header class="upload__header">
     <h2>📤 Subir nuevos documentos</h2>
-    <p>Arrastra archivos aquí o haz clic para seleccionar. Elige el área responsable antes de indexar.</p>
+    <p>Arrastra archivos o selecciona archivos. Elige la categoría para guardarlos en su carpeta correcta.</p>
   </header>
 
   <label class="upload__area-label" for="upload-area">Área / categoría</label>
@@ -25,6 +24,10 @@
     <p class="dropzone__text">Arrastra archivos aquí o haz clic para seleccionar</p>
     <p class="dropzone__formats">Formatos soportados: PDF, Word, Excel, PowerPoint, Markdown, CSV, JSON, HTML</p>
   </label>
+
+  <div *ngIf="alertMessage()" class="upload__alert" [ngClass]="'upload__alert--' + alertType()">
+    <p>{{ alertMessage() }}</p>
+  </div>
 
   <ul class="doc-list">
     <li class="doc-row" *ngFor="let doc of docs()">

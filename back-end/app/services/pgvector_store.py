@@ -9,9 +9,13 @@ Nota: este adaptador crea una tabla simple con metadatos y una columna `vector(d
 """
 from typing import List, Optional, Tuple
 import os
-import psycopg2
-import psycopg2.extras
-from psycopg2 import sql
+try:
+    import psycopg2
+    import psycopg2.extras
+    from psycopg2 import sql
+except ImportError:
+    psycopg2 = None
+    sql = None
 import numpy as np
 
 from app.config import settings

@@ -1,6 +1,9 @@
+import csv
 import os
 import re
 import json
+import zipfile
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import List, Dict, Any, Tuple, Optional
 
@@ -204,7 +207,12 @@ class DocumentLoader:
             return DocumentLoader._read_html_structured(file_path)
         elif ext in [".md", ".txt"]:
             return DocumentLoader._read_markdown_structured(file_path)
+        elif ext == ".odt":
+            return DocumentLoader._read_odt_structured(file_path)
         else:
+            generic = DocumentLoader._read_generic_text_file(file_path)
+            if generic:
+                return generic
             print(f"[DocumentLoader] ⚠️ Formato omitido: '{ext}' en {filename}")
             return []
 
@@ -289,6 +297,52 @@ class DocumentLoader:
         return blocks
 
     @staticmethod
+    def _read_odt_structured(file_path: str) -> List[Dict[str, str]]:
+        """ODT: Extrae texto desde el XML del documento OpenDocument Text."""
+        blocks: List[Dict[str, str]] = []
+        try:
+            with zipfile.ZipFile(file_path, "r") as archive:
+                raw = archive.read("content.xml").decode("utf-8", errors="ignore")
+        except Exception as e:
+            print(f"[DocumentLoader] ❌ Error leyendo ODT {file_path}: {e}")
+            return blocks
+
+        try:
+            root = ET.fromstring(raw)
+            ns = {
+                "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+                "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
+            }
+
+            current_section = "Sección General"
+            section_text: List[str] = []
+
+            # Procesar títulos (<text:h>) y párrafos (<text:p>)
+            for element in root.findall(".//text:h", ns) + root.findall(".//text:p", ns):
+                text_value = "".join(element.itertext()).strip()
+                if not text_value:
+                    continue
+
+                if element.tag == f"{{{ns['text']}}}h":
+                    if section_text:
+                        full_content = DocumentLoader.clean_text("\n".join(section_text))
+                        if full_content:
+                            blocks.append({"content": full_content, "location": current_section})
+                        section_text = []
+                    current_section = f"Sección: {text_value}"
+                else:
+                    section_text.append(text_value)
+
+            if section_text:
+                full_content = DocumentLoader.clean_text("\n".join(section_text))
+                if full_content:
+                    blocks.append({"content": full_content, "location": current_section})
+        except Exception as e:
+            print(f"[DocumentLoader] ❌ Error extrayendo ODT {file_path}: {e}")
+
+        return blocks
+
+    @staticmethod
     def _read_pptx_structured(file_path: str) -> List[Dict[str, str]]:
         """POWERPOINT: Extracción de texto por diapositiva + notas del orador (Speaker Notes)."""
         blocks = []
@@ -358,6 +412,17 @@ class DocumentLoader:
                 cleaned = DocumentLoader.clean_text("\n".join(rows_text))
                 if cleaned:
                     blocks.append({"content": cleaned, "location": "Tabla CSV"})
+            else:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    reader = csv.DictReader(f)
+                    rows_text = []
+                    for row_idx, row in enumerate(reader, start=1):
+                        formatted_row = ", ".join([f"{col}: {val}" for col, val in row.items() if val not in (None, "")])
+                        if formatted_row:
+                            rows_text.append(f"[Fila {row_idx}] {formatted_row}")
+                    cleaned = DocumentLoader.clean_text("\n".join(rows_text))
+                    if cleaned:
+                        blocks.append({"content": cleaned, "location": "Tabla CSV"})
         except Exception as e:
             print(f"[DocumentLoader] ❌ Error extrayendo CSV {file_path}: {e}")
 
@@ -439,6 +504,19 @@ class DocumentLoader:
         except Exception as e:
             print(f"[DocumentLoader] ❌ Error extrayendo Markdown {file_path}: {e}")
 
+        return blocks
+
+    @staticmethod
+    def _read_generic_text_file(file_path: str) -> List[Dict[str, str]]:
+        blocks: List[Dict[str, str]] = []
+        try:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                raw_text = f.read()
+            cleaned = DocumentLoader.clean_text(raw_text)
+            if cleaned:
+                blocks.append({"content": cleaned, "location": "Texto genérico"})
+        except Exception as e:
+            print(f"[DocumentLoader] ⚠️ No se pudo leer como texto el archivo {file_path}: {e}")
         return blocks
 
     # =========================================================================

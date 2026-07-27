@@ -1,6 +1,11 @@
 import os
+import csv
+from pathlib import Path
+from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, field_validator
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Settings(BaseSettings):
     """
@@ -25,6 +30,16 @@ class Settings(BaseSettings):
     API_V1_STR: str = Field(
         default="/api",
         description="Prefijo común para las rutas de la API v1"
+    )
+
+    HOST: str = Field(
+        default="0.0.0.0",
+        description="Host en el que se ejecuta el servidor FastAPI"
+    )
+
+    PORT: int = Field(
+        default=8000,
+        description="Puerto en el que se ejecuta el servidor FastAPI"
     )
 
     # ---------------------------------------------------------------------------
@@ -59,7 +74,7 @@ class Settings(BaseSettings):
     
     # Directorio de almacenamiento de documentos corporativos organizados por áreas
     DATA_DIR: str = Field(
-        default="./data",
+        default=str(BASE_DIR / "data"),
         description="Ruta relativa o absoluta donde se almacenan los documentos corporativos por categorías"
     )
 
@@ -67,6 +82,30 @@ class Settings(BaseSettings):
         default="",
         description="Rutas adicionales separadas por coma para mapeo de fuentes locales (Etapa 1)",
     )
+
+    @field_validator('DATA_DIR', mode='before')
+    @classmethod
+    def normalize_data_dir(cls, value: str) -> str:
+        if not value:
+            return str(BASE_DIR / "data")
+        path = Path(value).expanduser()
+        if path.is_absolute():
+            return str(path.resolve())
+        return str((BASE_DIR / path).resolve())
+
+    @field_validator('EXTRA_DATA_DIRS', mode='before')
+    @classmethod
+    def normalize_extra_dirs(cls, value: str) -> str:
+        if not value:
+            return ""
+        normalized_paths = []
+        for part in value.split(","):
+            part = part.strip()
+            if not part:
+                continue
+            path = Path(part).expanduser()
+            normalized_paths.append(str(path.resolve() if path.is_absolute() else (BASE_DIR / path).resolve()))
+        return ",".join(normalized_paths)
 
     CHUNK_SIZE_CHARS: int = Field(
         default=1000,

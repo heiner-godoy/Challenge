@@ -13,8 +13,9 @@ Uso:
 """
 
 from app.main import app
+from app.config import settings
 
 if __name__ == "__main__":
     import uvicorn
-    # Inicializa el servidor web ASGI Uvicorn en el puerto 8000 con recarga automática en desarrollo
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    # Inicializa el servidor web ASGI Uvicorn usando el host y puerto configurados en .env
+    uvicorn.run("main:app", host=settings.HOST, port=settings.PORT, reload=True)

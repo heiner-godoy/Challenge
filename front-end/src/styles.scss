@@ -5,26 +5,25 @@
 
 :root {
   /* Marca */
-  --color-primary: #6C63FF;
-  --color-secondary: #00E5FF;
-  --color-accent: #8A2BE2;
+  --color-primary: #53E7FF;
+  --color-secondary: #FF4C6D;
+  --color-accent: #B76BFF;
 
-  /* Superficies y texto — modo claro */
-  --bg-app: #F8F9FA;
-  --bg-sidebar: #FFFFFF;
-  --bg-bubble-agent: #FFFFFF;
-  --bg-bubble-user: #2874A6;
-  --bg-input: #FFFFFF;
-  --text-primary: #2C3E50;
-  --text-secondary: #7F8C8D;
-  --text-on-accent: #FFFFFF;
+  --bg-app: #04050f;
+  --bg-sidebar: #081026;
+  --bg-bubble-agent: #081a2b;
+  --bg-bubble-user: #122448;
+  --bg-input: #07131f;
+  --text-primary: #e7f6ff;
+  --text-secondary: #7d99b4;
+  --text-on-accent: #070b14;
 
-  --hover-sidebar-item: #EBF5FB;
+  --hover-sidebar-item: rgba(255, 76, 109, 0.12);
 
-  --border-subtle: #E5E9EC;
-  --success: #27AE60;
-  --danger: #E74C3C;
-  --warning: #F39C12;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --success: #23efd6;
+  --danger: #ff3b7c;
+  --warning: #ffc658;
 
   --font-display: 'Poppins', 'Inter', sans-serif;
   --font-body: 'Inter', 'Open Sans', sans-serif;

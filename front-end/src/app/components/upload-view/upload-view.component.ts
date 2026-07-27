@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { KnowledgeDoc, AreaId } from '../../models/models';
 import { AREAS, ChatService, areaIdToUploadCategory } from '../../core/chat.service';
@@ -19,7 +18,7 @@ interface DocumentInventoryResponse {
 @Component({
   selector: 'nexus-upload-view',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './upload-view.component.html',
   styleUrl: './upload-view.component.scss',
 })
@@ -32,6 +31,9 @@ export class UploadViewComponent implements OnInit {
   readonly isProcessing = signal(false);
   readonly areas = AREAS;
   readonly uploadCategory = signal<AreaId | 'general'>('general');
+
+  readonly alertMessage = signal<string | null>(null);
+  readonly alertType = signal<'success' | 'error' | 'info' | null>(null);
 
   private readonly pendingFiles = new Map<string, File>();
 
@@ -71,12 +73,16 @@ export class UploadViewComponent implements OnInit {
   }
 
   processAll(): void {
+    this.alertMessage.set(null);
+    this.alertType.set(null);
+
     if (this.pendingFiles.size === 0) {
       void this.triggerIngestOnly();
       return;
     }
 
     this.isProcessing.set(true);
+    const fileCount = this.pendingFiles.size;
     this.docs.update((list) =>
       list.map((d) => (d.status === 'procesando' ? { ...d, status: 'procesando', progress: 40 } : d)),
     );
@@ -87,32 +93,67 @@ export class UploadViewComponent implements OnInit {
       form.append('files', file, file.name);
     }
 
+    const processingIds = new Set(this.pendingFiles.keys());
     this.http.post<{ status: string; message: string }>('/api/upload', form).subscribe({
-      next: () => {
-        this.pendingFiles.clear();
-        this.triggerIngestOnly();
-      },
-      error: () => {
-        this.isProcessing.set(false);
+      next: (res) => {
         this.docs.update((list) =>
-          list.map((d) => (d.status === 'procesando' ? { ...d, status: 'error' } : d)),
+          list.map((d) =>
+            processingIds.has(d.id)
+              ? { ...d, status: 'procesando', progress: 80 }
+              : d,
+          ),
+        );
+        this.pendingFiles.clear();
+        this.alertMessage.set(`✅ Archivo(s) guardados correctamente. Indexando en la base de conocimientos...`);
+        this.alertType.set('info');
+        this.triggerIngestOnly(fileCount, processingIds);
+      },
+      error: (err) => {
+        this.isProcessing.set(false);
+        const detail = err.error?.detail || 'No se pudieron subir los archivos. Verifica que el formato sea soportado y no sea un borrador.';
+        this.alertMessage.set(`⚠️ Error al subir archivo: ${detail}`);
+        this.alertType.set('error');
+        this.docs.update((list) =>
+          list.map((d) =>
+            processingIds.has(d.id) ? { ...d, status: 'error', progress: 0 } : d,
+          ),
         );
       },
     });
   }
 
-  private triggerIngestOnly(): void {
-    this.http.post('/api/ingest', {}).subscribe({
+  private triggerIngestOnly(uploadedCount?: number, processingIds?: Set<string>): void {
+    this.http.post<{ status: string; message: string }>('/api/ingest', {}).subscribe({
       next: () => {
         this.isProcessing.set(false);
         this.chat.refreshOperationalStats();
+        if (processingIds) {
+          this.docs.update((list) =>
+            list.map((d) =>
+              processingIds.has(d.id)
+                ? { ...d, status: 'listo', progress: 100 }
+                : d,
+            ),
+          );
+        }
         this.loadInventory();
+        const msg = uploadedCount
+          ? `🎉 ¡Éxito! Se guardaron e indexaron ${uploadedCount} archivo(s). El agente ya puede responder preguntas sobre esta información.`
+          : '🔄 Base de conocimientos reindexada correctamente.';
+        this.alertMessage.set(msg);
+        this.alertType.set('success');
       },
       error: () => {
         this.isProcessing.set(false);
-        this.docs.update((list) =>
-          list.map((d) => (d.status === 'procesando' ? { ...d, status: 'error' } : d)),
-        );
+        this.alertMessage.set('⚠️ Los archivos se guardaron pero ocurrió un error al reindexar la base de datos.');
+        this.alertType.set('error');
+        if (processingIds) {
+          this.docs.update((list) =>
+            list.map((d) =>
+              processingIds.has(d.id) ? { ...d, status: 'listo', progress: 100 } : d,
+            ),
+          );
+        }
       },
     });
   }

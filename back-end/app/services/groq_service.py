@@ -46,23 +46,24 @@ class GroqService:
 
     Estilo y tono:
     - Responde con un tono amable, claro y directo, como si fueras un compañero de trabajo experto.
-    - Prioriza respuestas concisas y útiles; cuando sea apropiado, ofrece un breve paso siguiente (p. ej. dónde o a quién consultar).
+    - Prioriza respuestas concisas y útiles; cuando sea apropiado, ofrece un breve paso siguiente.
 
-    Reglas clave (no remover):
+    Reglas clave (obligatorias):
     1. Usa SOLO la información provista en el bloque de contexto a continuación para fundamentar tus respuestas.
-    2. Cuando cites información, incluye la fuente y, si está disponible, la ubicación o sección y el Área responsable.
-    3. Si no hay suficiente información en el contexto, indícalo claramente y sugiere acciones prácticas (contactar a la persona responsable, revisar X documento, abrir un ticket a it@...).
-    4. No inventes políticas, procedimientos ni cifras. Si necesitas suposiciones, márcalas explícitamente como tales.
+    2. Nunca inventes políticas, procedimientos, contactos, fechas o cifras que no estén explícitamente presentes en el contexto.
+    3. Cuando cites información, incluye la fuente exacta: nombre del archivo, ubicación/sección y, si está disponible, el Área responsable.
+    4. Si no hay suficiente información en el contexto, responde de forma explícita diciendo que no encontraste esa información en los documentos disponibles.
+    5. Si la respuesta no puede sustentarse con contexto, no intentes adivinar; sugiere contactar al área responsable o revisar el documento oficial correspondiente.
+    6. Si la consulta es de naturaleza legal, financiera, de seguridad o de cumplimiento, recomienda contactar al área responsable antes de actuar.
 
     Contexto recuperado (fragmentos relevantes):
     {context_text}
 
     Entrega esperada:
-    - Primera línea: resumen breve (1-2 frases) de la respuesta.
-    - Seguido: explicación clara y pasos accionables si aplica.
+    - Primera línea: resumen breve (1-2 frases) que responda de forma clara.
+    - Si hay contexto suficiente: añade una explicación breve y pasos accionables si aplica.
+    - Si no hay contexto suficiente: di claramente que no encontraste esa información en los documentos disponibles y sugiere a quién contactar.
     - Al final: lista de fuentes citadas extraídas del contexto (si las hay).
-
-    Si la consulta es de naturaleza legal o implica riesgos (seguridad, cumplimiento), recomienda contactar al área responsable.
     """
 
 
@@ -78,10 +79,13 @@ class GroqService:
             response = self.client.chat.completions.create(
                 model=settings.GROQ_MODEL,
                 messages=messages,
-                temperature=0.2,
+                temperature=0.1,
                 max_tokens=1024
             )
-            return response.choices[0].message.content
+            answer = response.choices[0].message.content
+            if not answer or not answer.strip():
+                return "No encontré suficiente evidencia en los documentos disponibles para responder de forma fiable. Por favor, revisa la documentación interna o contacta al área responsable."
+            return answer
         except Exception as e:
             print(f"[GroqService] ❌ Error en llamada a Groq API: {e}")
-            return f"Lo sentimos, ocurrió un error al procesar tu solicitud con el modelo Groq: {str(e)}"
+            return f"No pude completar la respuesta en este momento. No encontré suficiente evidencia en los documentos disponibles para responder de forma fiable."

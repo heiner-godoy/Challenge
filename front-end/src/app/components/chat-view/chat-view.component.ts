@@ -11,13 +11,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ChatService, QUICK_SUGGESTIONS } from '../../core/chat.service';
 import { ChatMessageComponent } from './chat-message.component';
+import { UploadViewComponent } from '../upload-view/upload-view.component';
 
 const MAX_CHARS = 800;
 
 @Component({
   selector: 'nexus-chat-view',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ChatMessageComponent],
+  imports: [CommonModule, FormsModule, RouterLink, ChatMessageComponent, UploadViewComponent],
   templateUrl: './chat-view.component.html',
   styleUrl: './chat-view.component.scss',
 })
@@ -48,6 +49,15 @@ export class ChatViewComponent implements AfterViewChecked {
 
   onFeedback(messageId: string, value: 'up' | 'down'): void {
     this.chat.setFeedback(messageId, value);
+  }
+
+  startNewSession(): void {
+    this.chat.clearHistory();
+    this.draft = '';
+  }
+
+  scrollToUpload(): void {
+    document.getElementById('upload-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   ngAfterViewChecked(): void {

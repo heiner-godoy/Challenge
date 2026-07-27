@@ -11,10 +11,6 @@
   </header>
 
   <div class="shell__content">
-    <aside class="shell__sidebar" aria-hidden="false" [class.sidebar--collapsed]="collapsed">
-      <nexus-sidebar (closeSidebar)="onCloseSidebar()"></nexus-sidebar>
-    </aside>
-
     <main class="shell__main">
       <router-outlet></router-outlet>
     </main>

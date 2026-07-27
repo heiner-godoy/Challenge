@@ -15,9 +15,7 @@
   margin-bottom: 14px;
 }
 
-.row--user {
-  justify-content: flex-end;
-}
+.row--user { justify-content: flex-end; }
 
 .avatar {
   width: 36px;
@@ -26,89 +24,92 @@
   display: grid;
   place-items: center;
   font-size: 16px;
-  background: linear-gradient(135deg, rgba(240,242,246,1), rgba(230,232,237,1));
-  color: var(--text-primary);
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(2,6,23,0.06);
+  background: linear-gradient(135deg, #f2f7fb, #dce6ef);
+  color: #0b1726;
+  border-radius: 10px;
 }
 
 .bubble {
   max-width: min(720px, 78%);
-  background: var(--bg-bubble-agent);
-  color: var(--text-primary);
+  background: #0f2236;
+  color: #eaf6ff;
   padding: 12px 14px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(2,6,23,0.06);
-  border: 1px solid var(--border-subtle);
-  transition: transform 160ms ease, box-shadow 160ms ease;
-
-  &--user {
-    background: linear-gradient(90deg, #2ee6a3, #16c07a);
-    color: #02211a;
-    border-radius: 18px 12px 12px 18px;
-    transform-origin: right center;
-  }
-
-  &__lead {
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-
-  &__bullets {
-    margin: 0 0 8px;
-    padding-left: 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 14.5px;
-  }
-
-  &__sources {
-    border-top: 1px solid var(--border-subtle);
-    margin-top: 8px;
-    padding-top: 8px;
-  }
-
-  &__sources-title {
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin-bottom: 2px;
-  }
-
-  &__source {
-    font-size: 12.5px;
-    color: var(--text-secondary);
-
-    strong, span, small { display: block; }
-    strong { color: var(--text-primary); font-weight: 600; }
-    span { font-size: 11px; }
-    small { font-size: 10px; margin-top: 2px; }
-  }
-
-  &__meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 11.5px;
-    color: var(--text-secondary);
-    margin-top: 8px;
-
-    &--user {
-      color: rgba(255, 255, 255, 0.8);
-      justify-content: flex-end;
-    }
-  }
+  border-radius: 14px;
+  border: 1px solid rgba(138, 196, 226, 0.16);
 }
 
-.bubble__feedback { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 10px; }
-.bubble__feedback button { border: 1px solid var(--border-subtle); border-radius: 5px; background: transparent; color: var(--text-secondary); padding: 3px 8px; font-size: 10px; }
-.bubble__feedback button:hover, .bubble__feedback button.selected { border-color: var(--color-secondary); color: var(--color-secondary); }
-.chip {
-  border: 1px solid rgba(255,255,255,0.03);
-  background: rgba(255,255,255,0.01);
-  color: var(--text-primary);
-  border-radius: 999px;
-  padding: 6px 12px;
+.bubble--user {
+  background: linear-gradient(90deg, #2ee6a3, #16c07a);
+  color: #02211a;
+  border-radius: 18px 12px 12px 18px;
+}
+
+.bubble__agent-tag {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #81c7e2;
+  margin-bottom: 6px;
+}
+
+.bubble__lead { font-weight: 600; margin-bottom: 6px; }
+.bubble__bullets { margin: 0 0 8px 16px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+
+.bubble__sources {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+.source-card summary {
+  cursor: pointer;
   font-size: 12px;
+  color: #8fd4ef;
 }
+
+.source-list {
+  margin: 8px 0 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.source-list li {
+  font-size: 11px;
+  color: #c9e4f4;
+}
+
+.source-list strong { display: block; color: #f7fbff; }
+.source-list span, .source-list p { display: block; margin-top: 2px; color: #91b4c6; }
+
+.bubble__feedback {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px;
+}
+
+.bubble__feedback button {
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  padding: 3px 8px;
+}
+
+.bubble__feedback button.selected, .bubble__feedback button:hover { border-color: #57e0e8; color: #57e0e8; }
+
+.bubble__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #85a9bf;
+}
+
+.bubble__meta--user { justify-content: flex-end; color: rgba(2,17,26,0.7); }
