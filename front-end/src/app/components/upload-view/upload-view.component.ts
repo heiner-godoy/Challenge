@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { KnowledgeDoc, AreaId } from '../../models/models';
-import { AREAS, ChatService, areaIdToUploadCategory } from '../../core/chat.service';
+import { AREAS, ChatService, areaIdToUploadCategory, API_BASE_URL } from '../../core/chat.service';
 
 interface DocumentInventoryResponse {
   documents: Array<{
@@ -94,7 +94,7 @@ export class UploadViewComponent implements OnInit {
     }
 
     const processingIds = new Set(this.pendingFiles.keys());
-    this.http.post<{ status: string; message: string }>('/api/upload', form).subscribe({
+    this.http.post<{ status: string; message: string }>(`${API_BASE_URL}api/upload`, form).subscribe({
       next: (res) => {
         this.docs.update((list) =>
           list.map((d) =>
@@ -123,7 +123,7 @@ export class UploadViewComponent implements OnInit {
   }
 
   private triggerIngestOnly(uploadedCount?: number, processingIds?: Set<string>): void {
-    this.http.post<{ status: string; message: string }>('/api/ingest', {}).subscribe({
+    this.http.post<{ status: string; message: string }>(`${API_BASE_URL}api/ingest`, {}).subscribe({
       next: () => {
         this.isProcessing.set(false);
         this.chat.refreshOperationalStats();
@@ -159,7 +159,7 @@ export class UploadViewComponent implements OnInit {
   }
 
   private loadInventory(): void {
-    this.http.get<DocumentInventoryResponse>('/api/documents').subscribe({
+    this.http.get<DocumentInventoryResponse>(`${API_BASE_URL}api/documents`).subscribe({
       next: (response) => {
         const mapped: KnowledgeDoc[] = response.documents.map((doc, index) => ({
           id: `inv-${index}-${doc.filename}`,

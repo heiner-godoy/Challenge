@@ -34,7 +34,7 @@ export function areaIdToCategoryFilter(area: AreaId | null): string | undefined 
   return area;
 }
 
-const API_BASE_URL = (typeof window !== 'undefined' && window.__APP_CONFIG__?.apiBaseUrl)
+export const API_BASE_URL = (typeof window !== 'undefined' && window.__APP_CONFIG__?.apiBaseUrl)
   ? window.__APP_CONFIG__.apiBaseUrl
   : '/';
 
