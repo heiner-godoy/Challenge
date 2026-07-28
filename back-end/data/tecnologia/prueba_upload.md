@@ -1,2 +1,0 @@
-# prueba
-Contenido de prueba
